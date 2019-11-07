@@ -27,118 +27,117 @@
     "field" = "name"
     "type" = "string.min_length"
     "value" = "2"
-    "error" = “Minimum required length is $value”
+    "error" = 'Minimum required length is $value'
 
     [[validator.name]]
     "field" = "name"
     "type" = "string.max_length"
     "value" = 50
-    "error" = “Maximum required length is $value”
+    "error" = 'Maximum required length is $value'
 
     [[validator.age]]
     "field" = "age"
     "type" = "int.min_value"
     "value" = 18
-    "error" = “Minimum age is $value”
+    "error" = 'Minimum age is $value'
 
 
 [api.root]
-endpoint = “/api/:foo/:bar/:baz”
 
+    endpoint = '/api/:foo/:bar/:baz'
     [api.root.get]
     "auth" = "false"
-    "query" = "$schema.user"
-    "result" = "$schema.user"
+    "query" = '$schema.user'
+    "result" = '$schema.user'
     "attachments" = "[father.father, mother.father]"
-    "display" = "{ "name": “User Name”, "age": “User Age” }schema"
+    "display" = { 'name' = 'User Name', 'age' = 'User Age' }
 
     [api.root.post]
     "auth" = "false"
-    "data" = "$schema.user"
-    "validator" = "[$validator.name, $validator.age]"
-    "result" = "$schema.user"
+    "data" = '$schema.user'
+    "validator" ='[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
     [api.root.put]
     "auth" = "false"
-    "data" = "$schema.user"
-    "validator" = "[$validator.name, $validator.age]"
-    "result" = "$schema.user"
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
     [api.root.patch]
     "auth" = "false"
-    "schema" = "$schema.user"
-    "validator" = "[$validator.name, $validator.age]"
-    "result" = "$schema.user"
+    "schema" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
     [api.root.delete]
     "auth" = "false"
-    "data" = "$schema.user"
-    "result" = "$schema.user"
+    "data" = '$schema.user'
+    "result" = '$schema.user'
 
 
 [api.detail]
-"endpoint" = “$api.root.endpoint/:id”
+     "endpoint" = '$api.root.endpoint/:id'
 
         [api.detail.get]
         "auth" = "false"
-        "query" = "$schema.user"
-        "display" = "{ "name": “User Name”, "age": “User Age” }"
+        "query" = '$schema.user'
+        "display" = { 'name'= 'User Name', 'age'= 'User Age' }
         "attachments" = "[father.father, mother.father]"
-        "result" = "$schema.user"
+        "result" = '$schema.user'
 
         [api.detail.post]
         "auth" = "false"
-        "data" = "$schema.user"
-        "validator" = "[$validator.name, $validator.age]"
+        "data" = '$schema.user'
+        "validator" = '[$validator.name, $validator.age]'
         "result" = "$schema.user"
 
         [api.detail.put]
         "auth" = "false"
-        "data" = "$schema.user"
-        "validator" = "[$validator.name, $validator.age]"
-        "result" = "$schema.user"
+        "data" = '$schema.user'
+        "validator" = '[$validator.name, $validator.age]'
+        "result" = '$schema.user'
 
         [api.detail.patch]
         "auth" = "false"
-        "data" = "$schema.user"
-        "validator" = "[$validator.name, $validator.age]"
-        "result" = "$schema.user"
+        "data" = '$schema.user'
+        "validator" = '[$validator.name, $validator.age]'
+        "result" = '$schema.user'
 
         [api.detail.delete]
         "auth" = "false"
-        "data" = "$schema.user"
-        "result" = "$schema.user"
+        "data" = '$schema.user'
+        "result" = '$schema.user'
 
 [api.approve]
-"endpoint" = “$api.detail.endpoint/approve”
+"endpoint" = '$api.detail.endpoint/approve'
 
     [api.approve.get]
     "auth" = "false"
-    "query_params" = "$schema.user"
-    "display" = "{ "name": “User Name”, "age": “User Age” }"
+    "query_params" = '$schema.user'
+    "display" = { 'name'= 'User Name', 'age'= 'User Age' }
     "attachments" = "[father.father, mother.father]"
-    "result" = "$schema.user"
+    "result" = '$schema.user'
 
     [api.approve.post]
     auth = false
-    "data" = "$schema.user"
-    "validator" = "[$validator.name, $validator.age]"
-    "result" = "$schema.user"
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
     [api.approve.put]
     "auth" = "false"
-    "data" = "$schema.user"
-    "validator" = "[$validator.name, $validator.age]"
-    "result" = "$schema.user"
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
     [api.approve.patch]
     "auth" = "false"
-    "data" = "$schema.user"
-    "validator" = "[$validator.name, $validator.age]"
-    "result" = "$schema.user"
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
     [api.approve.delete]
     "auth" = "false"
-    "data" = "$schema.user"
-    "result" = "$schema.user"
-
+    "data" = '$schema.user'
+    "result" = '$schema.user'
