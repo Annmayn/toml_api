@@ -26,6 +26,14 @@ toValidate map[string]interface{}
 	"age" : 12
 }
 
+toRequired map[string]interface{}
+
+{
+    "name" : "string",
+    "age" : "int!",
+    "weight" : "double!"
+}
+
 */
 
 //Validate : validate name,age
