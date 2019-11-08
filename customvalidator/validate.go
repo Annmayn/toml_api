@@ -42,6 +42,8 @@ func Validate(fromValidate map[string]interface{}, toValidate map[string]interfa
 
 			title := x["type"].(string)
 
+			// Split type eg. string.min_length
+
 			s := strings.Split(title, ".")
 
 			if _, ok := toValidate[i]; ok {
