@@ -1,5 +1,7 @@
 package customvalidator
 
+import "strings"
+
 /*
 fromValidate map[string]interface{}
 
@@ -27,45 +29,53 @@ toValidate map[string]interface{}
 //Validate : validate name,age
 func Validate(fromValidate map[string]interface{}, toValidate map[string]interface{}) map[string]string {
 
-	var validityResult map[string]string
+	validityResult := make(map[string]string)
 
 	validMap := fromValidate["validator"].(map[string]interface{})
 
-	//Name array interface
+	for i, v := range validMap {
 
-	tempNameMap := validMap["name"].([]interface{})
+		temp := v.([]interface{})
 
-	//Age map interface
-	ageValidity := validMap["age"].(map[string]interface{})
+		for _, v := range temp {
+			x := v.(map[string]interface{})
 
-	nameMinLengthValidity := tempNameMap[0].(map[string]interface{})
-	nameMaxLengthValidity := tempNameMap[1].(map[string]interface{})
+			title := x["type"].(string)
 
-	//Name validity parameters
-	nameMinLengthValue := int(nameMinLengthValidity["value"].(float64))
-	nameMaxLengthValue := int(nameMaxLengthValidity["value"].(float64))
+			// Split type eg. string.min_length
 
-	//Age validity parameters
-	ageMinLenghtValue := ageValidity["value"].(float64)
+			s := strings.Split(title, ".")
 
-	//Name and age to check for validity
-	nameToValid := toValidate["name"].(string)
-	ageToValid := toValidate["age"].(float64)
+			if _, ok := toValidate[i]; ok {
+				switch s[0] {
+				case "string":
+					if s[1] == "min_length" {
+						if len(toValidate[i].(string)) < int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
+					} else if s[1] == "max_length" {
+						if len(toValidate[i].(string)) > int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
 
-	//Validate Name
-	if len(nameToValid) >= nameMinLengthValue && len(nameToValid) <= nameMaxLengthValue {
-		validityResult["name"] = "name valid"
-	} else if len(nameToValid) < nameMinLengthValue {
-		validityResult["name"] = nameMinLengthValidity["error"].(string)
-	} else if len(nameToValid) > nameMaxLengthValue {
-		validityResult["name"] = nameMaxLengthValidity["error"].(string)
-	}
+					}
+				case "int":
+					if s[1] == "min_value" {
+						if int(toValidate[i].(float64)) < int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
+					} else if s[1] == "max_value" {
+						if int(toValidate[i].(float64)) > int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
 
-	//Validate Age
-	if ageToValid >= ageMinLenghtValue {
-		validityResult["age"] = "age valid"
-	} else {
-		validityResult["age"] = ageValidity["error"].(string)
+					}
+				}
+
+			}
+
+		}
+
 	}
 
 	return validityResult
