@@ -37,27 +37,39 @@ func Validate(fromValidate map[string]interface{}, toValidate map[string]interfa
 
 		temp := v.([]interface{})
 
-		min := temp[0].(map[string]interface{})
-		max := temp[1].(map[string]interface{})
+		for _, v := range temp {
+			x := v.(map[string]interface{})
 
-		s := strings.Split(min["type"].(string), ".")
+			title := x["type"].(string)
 
-		switch s[0] {
-		case "string":
-			if len(toValidate[i].(string)) >= int(min["value"].(float64)) && len(toValidate[i].(string)) <= int(max["value"].(float64)) {
-				validityResult[i] = i + " is valid"
-			} else if len(toValidate[i].(string)) < int(min["value"].(float64)) {
-				validityResult[i] = min["error"].(string)
-			} else {
-				validityResult[i] = max["error"].(string)
-			}
-		case "int":
-			if int(toValidate[i].(float64)) >= int(min["value"].(float64)) && int(toValidate[i].(float64)) <= int(max["value"].(float64)) {
-				validityResult[i] = i + " is valid"
-			} else if int(toValidate[i].(float64)) < int(min["value"].(float64)) {
-				validityResult[i] = min["error"].(string)
-			} else {
-				validityResult[i] = max["error"].(string)
+			s := strings.Split(title, ".")
+
+			if _, ok := toValidate[i]; ok {
+				switch s[0] {
+				case "string":
+					if s[1] == "min_length" {
+						if len(toValidate[i].(string)) < int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
+					} else if s[1] == "max_length" {
+						if len(toValidate[i].(string)) > int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
+
+					}
+				case "int":
+					if s[1] == "min_value" {
+						if int(toValidate[i].(float64)) < int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
+					} else if s[1] == "max_value" {
+						if int(toValidate[i].(float64)) > int(x["value"].(float64)) {
+							validityResult[i] = x["error"].(string)
+						}
+
+					}
+				}
+
 			}
 
 		}
