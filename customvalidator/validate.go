@@ -1,6 +1,8 @@
 package customvalidator
 
-import "strings"
+import (
+	"strings"
+)
 
 /*
 fromValidate map[string]interface{}
@@ -24,12 +26,33 @@ toValidate map[string]interface{}
 	"age" : 12
 }
 
+toRequired map[string]interface{}
+
+{
+    "name" : "string",
+    "age" : "int!",
+    "weight" : "double!"
+}
+
 */
 
 //Validate : validate name,age
-func Validate(fromValidate map[string]interface{}, toValidate map[string]interface{}) map[string]string {
+func Validate(fromValidate map[string]interface{}, toRequired map[string]interface{}, toValidate map[string]interface{}) map[string]string {
+
+	//fmt.Println(toRequired["age"].(string))
 
 	validityResult := make(map[string]string)
+
+	//Compare schema and toValidate data
+
+	for i, v := range toRequired {
+		temp := v.(string)
+		if temp[len(temp)-1:] == "!" {
+			if _, ok := toValidate[i]; !ok {
+				validityResult[i] = "required"
+			}
+		}
+	}
 
 	validMap := fromValidate["validator"].(map[string]interface{})
 
