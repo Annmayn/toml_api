@@ -101,3 +101,42 @@ func GetValidator(config interface{},validatorName string)interface{}{
 }
 
 
+//get set of methods for requestLevel
+/*
+	#Args: -config		(reader instance of toml file)
+          -requestLevel   (e.g.: root,detail,approve)
+
+	#Response: map[string]bool with set of allowed methods on that request level
+
+	e.g.: map[delete:true get:true patch:true post:true put:true]
+
+
+	#Example:
+			GetApiMethods(config,"root")
+		#Response:
+			map[delete:true get:true patch:true post:true put:true]
+
+
+	Note: Function will return nil if requestLevel doesn't match!
+*/
+func GetApiMethods(config interface{},requestLevel string)(map[string]bool){
+	response:=make(map[string]bool)   //set of methods allowed for that requestLevel
+
+	config=config.(map[string]interface{})["api"]
+	config,ok:=config.(map[string]interface{})[requestLevel]
+	if ok==false{
+		return nil
+	}
+
+	switch newConfig:=config.(type){
+	case map[string]interface{}:
+		for i,_:=range newConfig{
+			if i!="endpoint"{   //do not add endpoint to response string slice
+				response[i]=true
+			}
+		}
+	}
+	return response
+
+}
+
