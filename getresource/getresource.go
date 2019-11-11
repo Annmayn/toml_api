@@ -3,6 +3,8 @@ package getresource
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 )
 
 /*
@@ -51,3 +53,51 @@ val:=getresource.GetResource(c,"api","root","put","validator")
 	}
 	fmt.Println(res)
  */
+
+
+
+//get validators in map[string]interface{}
+//replaces $value by their corresponding values
+//function returns nil if validator config is not in array form
+func GetValidator(config interface{},validatorName string)interface{}{
+	config=config.(map[string]interface{})["validator"]
+
+	if len(validatorName)==0{
+		//this is not working as of now 11:11
+		switch newConfig:=config.(type){
+		case []map[string]interface{}:
+			for _,v:=range newConfig{
+				switch v["value"].(type) {
+				case string:
+					v["error"] = strings.Replace(v["error"].(string), "$value", v["value"].(string), 1)
+
+				case int64:
+					str := strconv.Itoa(int(v["value"].(int64)))
+					v["error"] = strings.Replace(v["error"].(string), "$value", str, 1)
+				}
+			}
+			return newConfig
+		}
+
+	}else{
+		config=config.(map[string]interface{})[validatorName]
+		switch newConfig:=config.(type){
+		case []map[string]interface{}:
+			for _,v:=range newConfig{
+				switch v["value"].(type){
+				case string:
+					v["error"]=strings.Replace(v["error"].(string),"$value",v["value"].(string),1)
+
+				case int64:
+					str:=strconv.Itoa(int(v["value"].(int64)))
+					v["error"]=strings.Replace(v["error"].(string),"$value",str,1)
+				}
+			}
+			return newConfig
+		}
+
+	}
+	return nil
+}
+
+
