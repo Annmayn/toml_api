@@ -4,29 +4,32 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"toml_api/requestconfig"
+	"toml_api/getresource"
 )
 
 //CustomHandler : redirects according to request method
-func CustomHandler(apiEndPoint map[string][]string) http.HandlerFunc{
-	fn := func(w http.ResponseWriter, r *http.Request){
+func CustomHandler(config interface{}, apiEndPoint map[string][]string) http.HandlerFunc {
+	fn := func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.String()
 		if url[len(url)-1] == '/' {
 			url = url[:len(url)-1]
 		}
-		if _, ok := apiEndPoint[url]; ok{
+		if _, ok := apiEndPoint[url]; ok {
 			loc := apiEndPoint[url]
-			
+
 			//eg: loc -> api/root
 			//skip api and send only "root" to getresource
-			methods := getresource.GetAnishCode(loc[1])	//returns map[string]
-			if _, ok := methods[r.Method]{
+			methods := getresource.GetApiMethods(config, loc[1]) //returns map[string]bool
+			if _, ok := methods[strings.ToLower(r.Method)]; ok {
 				//method allowed
-			}else{
+				fmt.Fprint(w, "Get access allowed")
+			} else {
 				//method not allowed
+				fmt.Fprint(w, "Not allowed")
 			}
-		} else{
+		} else {
 			//handle error because endpoint doesn't exist
+			fmt.Fprint(w, "Endpoint not defined")
 		}
 	}
 	return http.HandlerFunc(fn)
