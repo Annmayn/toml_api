@@ -2,48 +2,64 @@ package customvalidator
 
 import (
 	"strings"
+
+	"../getresource"
 )
 
 /*
-fromValidate map[string]interface{}
 
-{
-	"validator" : {
-		"name" : [
-			{"field" = "name","type" = "string.min_length",value" = "2","error" = 'Minimum required length is $value'},
-			{"field" = "name","type" = "string.max_length",value" = "50","error" = 'Maximum required length is $value'}
-		]
-		"age" : [
-			{"field" = "age", "type" = "int.min_value", "value" = 18, "error" = 'Minimum age is $value'}
-		]
+parameters::
+
+config interface{}
+package customvalidator
+
+import (
+	"strings"
+
+	"../getresource"
+)
+
+/*
+
+parameters::
+
+1. config interface{}
+
+
+2. validators []string
+
+	eg.
+	["$validator.name","$validator.age"]
+
+3. schema string
+
+	eg.
+	"$schema.user"
+
+
+4. toValidate map[string]interface{}
+
+	data
+	{
+		"name" : "temp_name",
+		"age" : 12
 	}
-}
-
-toValidate map[string]interface{}
-
-{
-	"name" : "temp_name",
-	"age" : 12
-}
-
-toRequired map[string]interface{}
-
-{
-    "name" : "string",
-    "age" : "int!",
-    "weight" : "double!"
-}
 
 */
 
 //Validate : validate name,age
-func Validate(fromValidate map[string]interface{}, toRequired map[string]interface{}, toValidate map[string]interface{}) map[string]string {
+func Validate(config interface{}, validators []string, schema string, toValidate map[string]interface{}) map[string]string {
 
 	//fmt.Println(toRequired["age"].(string))
 
 	validityResult := make(map[string]string)
 
 	//Compare schema and toValidate data
+
+	resources := strings.Split(schema, ".")
+
+	// resources[0][1:] ::  $schema =>schema
+	toRequired := (getresource.GetResource(config, resources[0][1:], resources[1])).(map[string]interface{})
 
 	for i, v := range toRequired {
 		temp := v.(string)
@@ -54,14 +70,14 @@ func Validate(fromValidate map[string]interface{}, toRequired map[string]interfa
 		}
 	}
 
-	validMap := fromValidate["validator"].(map[string]interface{})
+	for _, v := range validators {
+		validator := strings.Split(v, ".")
 
-	for i, v := range validMap {
+		//type of validation
+		i := validator[1]
 
-		temp := v.([]interface{})
-
-		for _, v := range temp {
-			x := v.(map[string]interface{})
+		validMap := getresource.GetValidator(config, i).([]map[string]interface{})
+		for _, x := range validMap {
 
 			title := x["type"].(string)
 
@@ -73,22 +89,22 @@ func Validate(fromValidate map[string]interface{}, toRequired map[string]interfa
 				switch s[0] {
 				case "string":
 					if s[1] == "min_length" {
-						if len(toValidate[i].(string)) < int(x["value"].(float64)) {
+						if len(toValidate[i].(string)) < int(x["value"].(int64)) {
 							validityResult[i] = x["error"].(string)
 						}
 					} else if s[1] == "max_length" {
-						if len(toValidate[i].(string)) > int(x["value"].(float64)) {
+						if len(toValidate[i].(string)) > int(x["value"].(int64)) {
 							validityResult[i] = x["error"].(string)
 						}
 
 					}
 				case "int":
 					if s[1] == "min_value" {
-						if int(toValidate[i].(float64)) < int(x["value"].(float64)) {
+						if int(toValidate[i].(float64)) < int(x["value"].(int64)) {
 							validityResult[i] = x["error"].(string)
 						}
 					} else if s[1] == "max_value" {
-						if int(toValidate[i].(float64)) > int(x["value"].(float64)) {
+						if int(toValidate[i].(float64)) > int(x["value"].(int64)) {
 							validityResult[i] = x["error"].(string)
 						}
 
