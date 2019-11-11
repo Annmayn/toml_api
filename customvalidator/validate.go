@@ -3,7 +3,7 @@ package customvalidator
 import (
 	"strings"
 
-	"../getresource"
+	"toml_api/getresource"
 )
 
 /*
