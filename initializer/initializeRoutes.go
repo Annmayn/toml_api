@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"toml_api/expand"
+
 	"github.com/BurntSushi/toml"
 )
 
+/////////////////depreciated///////////
 // func evaluateURL(url string) int {
 // 	urlSplit := strings.Split(url, "/")
 // 	for ind, dir := range urlSplit {
@@ -16,6 +19,7 @@ import (
 // 	}
 // 	return 0
 // }
+///////////////////////////////////////////
 
 //////////////////////////////////////////////////////////e
 //Can be used to check schema and redirect (not complete)
@@ -48,7 +52,12 @@ import (
 // 	}
 ////////////************************************///////////
 
-//InitializeRoutes : route initialization
+/*
+	Loads the configuration file into memory and
+	maps the endpoints to their location in configuration.
+
+	Returns memory loaded config, endpoint map and error
+*/
 func InitializeRoutes(resourceLocation string) (map[string]interface{}, map[string][]string, error) {
 	var configInterface interface{}
 	kv := make(map[string][]string)
@@ -60,6 +69,7 @@ func InitializeRoutes(resourceLocation string) (map[string]interface{}, map[stri
 	}
 	//make a key-value pair that maps endpoints to its schema in config
 	root := configInterface.(map[string]interface{})
+
 	var endPoints map[string]interface{}
 
 	endPoints = root["api"].(map[string]interface{}) //endPoints : root, detail, approve
@@ -74,6 +84,7 @@ func InitializeRoutes(resourceLocation string) (map[string]interface{}, map[stri
 			fmt.Println("Endpoint not defined")
 		} else {
 			//add the resource location to the key-value pair
+			endPointURL = expand.Endpoints(configInterface, endPointURL)
 			kv[endPointURL] = []string{"api", endPoint}
 		}
 	}

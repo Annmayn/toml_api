@@ -5,27 +5,29 @@ import (
 	"log"
 	"net/http"
 
-	"toml_api/handler"
 	"toml_api/initializer"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
-var router *httprouter.Router
+var router *mux.Router
 
 func main() {
 	resourceLocation := "resource.toml"
 
+	//initialize from the configuration file : resource.toml
 	//returns config, map of endpoint to resource and error
 	config, apiEndPoint, _ := initializer.InitializeRoutes(resourceLocation)
 
-	//do something with variables to prevent errors
-	fmt.Println(config)
-	fmt.Println("........")
-	fmt.Println(apiEndPoint)
+	//create new router
+	router = mux.NewRouter()
 
-	router = httprouter.New()
-	router.HandlerFunc("GET", "/*any", handler.CustomHandler(config, apiEndPoint))
+	//todo: return error
+	//initialize router to handle and validate all endpoints
+	apiEndPoint = initializer.InitializeRouter(router, config, apiEndPoint)
+	fmt.Println("Main: apeEndPoint -> ", apiEndPoint)
+
+	// router.HandleFunc("/*any", handler.CustomHandler(config, apiEndPoint))
 	// router.GET("/*any", handler.CustomHandler(apiEndPoint))
 	// // router.HandlerFunc("PUT", "/*any", handler.customHandler)
 	// // router.HandlerFunc("POST", "/*any", handler.customHandler)
