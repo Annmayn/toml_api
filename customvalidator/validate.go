@@ -32,14 +32,21 @@ parameters::
 		"age" : 12
 	}
 
+returns::
+
+1. data
+2. error
+
 */
 
 //Validate
-func Validate(config interface{}, validators []string, schema string, toValidate map[string]interface{}) map[string]string {
+func Validate(config interface{}, validators []string, schema string, toValidate map[string]interface{}) (map[string]interface{}, map[string]string) {
 
 	//fmt.Println(toRequired["age"].(string))
 
-	validityResult := make(map[string]string)
+	errorResult := make(map[string]string)
+
+	data := make(map[string]interface{})
 
 	//Compare schema and toValidate data
 
@@ -47,6 +54,13 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 
 	// resources[0][1:] ::  $schema =>schema
 	toRequired := (getresource.GetResource(config, resources[0][1:], resources[1])).(map[string]interface{})
+
+	//get all data within schema
+	for i, v := range toValidate {
+		if _, ok := toRequired[i]; ok {
+			data[i] = v
+		}
+	}
 
 	for i, v := range toRequired {
 		temp := v.(string)
@@ -104,5 +118,5 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 
 	}
 
-	return validityResult
+	return data, errorResult
 }
