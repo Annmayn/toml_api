@@ -1,4 +1,4 @@
-package getreqhandler
+package requesthandler
 
 import (
 	"encoding/json"
@@ -16,9 +16,9 @@ var getConfig methodconfigs.GetRequestConfig
 func GetHandler(w http.ResponseWriter, config interface{},loc []string,method string){
 	resource:=getresource.GetResource(config,loc[0],loc[1],strings.ToLower(method))
 
-
 	b,_:=json.Marshal(resource)
 	json.Unmarshal(b, &getConfig)
+
 
 
 	/*
