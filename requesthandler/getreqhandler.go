@@ -8,6 +8,7 @@ import (
 	"toml_api/errorresponse"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
+	"toml_api/query"
 )
 
 //config for GET Request
@@ -26,8 +27,17 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
+
 	//perform next steps
-	//result:=queryTable(getConfig.Query,getConfig.QueryParams,getConfig.Attachments)
+	result:= query.QueryHandler(config,getConfig.Query,getConfig.QueryParams,getConfig.Result, getConfig.Attachments)
+	fmt.Println("result",result)
+
+	//send response
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(404)
+	json.NewEncoder(w).Encode(result)
+	return
+
 
 	/*
 		TODO:
