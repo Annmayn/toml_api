@@ -44,10 +44,8 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 
 	//fmt.Println(toRequired["age"].(string))
 
-	//error map
 	validityResult := make(map[string]string)
 
-	//data map
 	data := make(map[string]interface{})
 
 	//Compare schema and toValidate data

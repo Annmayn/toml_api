@@ -11,7 +11,7 @@
 [schema]
     [schema.user]
     "name" = "string"
-    "age" = "int"
+    "age" = "int!"
     "weight" = "double"
 
     [schema.father]
