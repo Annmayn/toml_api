@@ -31,7 +31,7 @@ func CustomHandler(config interface{}, apiEndPoint map[string][]string, loc []st
 				//pass request to GET Request Handler
 				requesthandler.GetHandler(w, config, loc)
 			case "POST":
-
+				requesthandler.PostHandler(w,config,loc)
 			case "DELETE":
 				requesthandler.DeleteHandler(w, config, loc)
 			case "PUT":

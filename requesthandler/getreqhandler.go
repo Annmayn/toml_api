@@ -12,6 +12,7 @@ import (
 var getConfig methodconfigs.GetRequestConfig
 
 //handle all incoming GET requests here
+
 func GetHandler(w http.ResponseWriter, config interface{}, loc []string) {
 	resource := getresource.GetResource(config, loc[0], loc[1], "get")
 
