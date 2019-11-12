@@ -2,32 +2,39 @@ package query
 
 import (
 	"strings"
+	"toml_api/fileio"
 	"toml_api/getresource"
 )
 
 func QueryHandler(config interface{}, query string, queryParams string, result string, attachments []string) interface{}{
 	//filter query according to resultFields
-	var resultFields []string
+	resultFields:=make(map[string]bool)
+	response:=make(map[string]interface{})
 
 	result=strings.Replace(result,"$","",1)
 	res:=strings.Split(result,".")
 
 	newResultInterface:=getresource.GetResource(config,res[0],res[1])
 	for key,_:=range newResultInterface.(map[string]interface{}){
-		resultFields=append(resultFields,key)
+		resultFields[key]=true
 	}
 
 	//read from db
+	queryResults:=fileio.ReadFromFile()
 
-	//fetch query result
+	//filter query results according to resultFields
+	for key,val:=range queryResults.(map[string]interface{}){
+		if _,ok:=resultFields[key];ok{
+			response[key]=val
+		}
+	}
 	//return query result
-
-	return newResultInterface
+	return response
 
 	/*
-	   SinkPlugin will receive table name, query params, attachments result
+	   TODO: SinkPlugin will receive table name, query params, attachments result
 	 */
-	//marshal
+
 
 
 }

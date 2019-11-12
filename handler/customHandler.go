@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"toml_api/errorresponse"
@@ -14,8 +14,9 @@ func CustomHandler(config interface{}, apiEndPoint map[string][]string, loc []st
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		url := r.URL.String()
-		fmt.Println("location", loc[1])
-		fmt.Println("url", url)
+		log.Println("Api location ==> ",loc[1])
+		log.Println("Request coming via ==> ",url)
+
 		if url[len(url)-1] == '/' {
 			url = url[:len(url)-1]
 		}

@@ -29,8 +29,11 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	}
 
 	//perform next steps
+	/*
+	Current implementation reads only from a database.json file.
+	However, a generic QueryHandler has been created for future implementations!
+	 */
 	result:= query.QueryHandler(config,getConfig.Query,getConfig.QueryParams,getConfig.Result, getConfig.Attachments)
-	fmt.Println("result",result)
 
 	//send response
 	w.Header().Add("Content-Type", "application/json")
