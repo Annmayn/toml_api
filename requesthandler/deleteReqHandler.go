@@ -21,8 +21,8 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, config interface{}, l
 	json.Unmarshal(b, &deleteConfig)
 
 	//authenticate request
-	if !authenticator.IsAuthenticated(getConfig.Auth){
-		errorresponse.ThrowError(w,"Request not authorized!")
+	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
+		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
 

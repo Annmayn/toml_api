@@ -1,18 +1,23 @@
 package authenticator
 
-func IsAuthenticated(auth bool)	bool {
-	if !auth{
+import (
+	"net/http"
+)
+
+func IsAuthenticated(r *http.Request, auth bool) bool {
+	if !auth {
 		return true
-	}else{
-		authenticated := performAuthentication()
-		return authenticated
 	}
+	authenticated := performAuthentication(r)
+	return authenticated
 }
 
-func performAuthentication() bool {
+func performAuthentication(r *http.Request) bool {
 	//logic for authentication
-
-	//return true if authorized else false
-	return true
+	username, pwd, _ := r.BasicAuth()
+	if username == "admin" && pwd == "admin" {
+		return true
+	}
+	return false
 
 }

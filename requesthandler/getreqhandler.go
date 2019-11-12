@@ -22,14 +22,12 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	json.Unmarshal(b, &getConfig)
 
 	//authenticate request
-	if !authenticator.IsAuthenticated(getConfig.Auth){
-		errorresponse.ThrowError(w,"Request not authorized!")
-	  	return
+	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
+		errorresponse.ThrowError(w, "Request not authorized!")
+		return
 	}
 	//perform next steps
 	//result:=queryTable(getConfig.Query,getConfig.QueryParams,getConfig.Attachments)
-
-
 
 	/*
 		TODO:

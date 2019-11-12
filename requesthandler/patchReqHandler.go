@@ -21,8 +21,8 @@ func PatchHandler(w http.ResponseWriter, r *http.Request, config interface{}, lo
 	json.Unmarshal(b, &patchConfig)
 
 	//authenticate request
-	if !authenticator.IsAuthenticated(getConfig.Auth){
-		errorresponse.ThrowError(w,"Request not authorized!")
+	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
+		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
 
