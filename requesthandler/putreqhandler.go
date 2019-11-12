@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"toml_api/authenticator"
+	"toml_api/errorresponse"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 )
@@ -12,7 +14,7 @@ import (
 var putConfig methodconfigs.PutRequestConfig
 
 //handle all incoming PUT requests here
-func PutHandler(w http.ResponseWriter, config interface{}, loc []string) {
+func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc []string) {
 
 	fmt.Println(loc)
 	resource := getresource.GetResource(config, loc[0], loc[1], "put")
@@ -22,7 +24,11 @@ func PutHandler(w http.ResponseWriter, config interface{}, loc []string) {
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &putConfig)
 
-	fmt.Println(putConfig)
+	//authenticate request
+	if !authenticator.IsAuthenticated(getConfig.Auth){
+		errorresponse.ThrowError(w,"Request not authorized!")
+		return
+	}
 
 	/*
 		TODO:

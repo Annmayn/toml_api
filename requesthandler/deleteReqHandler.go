@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"toml_api/authenticator"
+	"toml_api/errorresponse"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 )
@@ -12,11 +14,17 @@ import (
 var deleteConfig methodconfigs.DeleteRequestConfig
 
 //handle all incoming DELETE requests here
-func DeleteHandler(w http.ResponseWriter, config interface{}, loc []string) {
+func DeleteHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc []string) {
 	resource := getresource.GetResource(config, loc[0], loc[1], "delete")
 
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &deleteConfig)
+
+	//authenticate request
+	if !authenticator.IsAuthenticated(getConfig.Auth){
+		errorresponse.ThrowError(w,"Request not authorized!")
+		return
+	}
 
 	/*
 		TODO:

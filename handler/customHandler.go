@@ -29,17 +29,17 @@ func CustomHandler(config interface{}, apiEndPoint map[string][]string, loc []st
 			switch r.Method {
 			case "GET":
 				//pass request to GET Request Handler
-				requesthandler.GetHandler(w, config, loc)
+				requesthandler.GetHandler(w, r, config, loc)
 			case "POST":
-				requesthandler.PostHandler(w,config,loc)
+				requesthandler.PostHandler(w, r, config, loc)
 			case "DELETE":
-				requesthandler.DeleteHandler(w, config, loc)
+				requesthandler.DeleteHandler(w, r, config, loc)
 			case "PUT":
 				//pass request to PUT Request Handler
-				requesthandler.PutHandler(w, config, loc)
+				requesthandler.PutHandler(w, r, config, loc)
 
 			case "PATCH":
-				requesthandler.PatchHandler(w, config, loc)
+				requesthandler.PatchHandler(w, r, config, loc)
 			default:
 				errorresponse.ThrowError(w, "Method not recognized!")
 			}

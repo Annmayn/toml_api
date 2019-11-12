@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"toml_api/authenticator"
+	"toml_api/errorresponse"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 )
@@ -12,12 +14,17 @@ import (
 var postConfig methodconfigs.PostRequestConfig
 
 //handle all incoming POST requests here
-func PostHandler(w http.ResponseWriter, config interface{},loc []string){
+func PostHandler(w http.ResponseWriter, r *http.Request, config interface{},loc []string){
 	resource:=getresource.GetResource(config,loc[0],loc[1],"post")
 
 	b,_:=json.Marshal(resource)
 	json.Unmarshal(b, &postConfig)
 
+	//authenticate request
+	if !authenticator.IsAuthenticated(getConfig.Auth){
+		errorresponse.ThrowError(w,"Request not authorized!")
+		return
+	}
 
 
 	/*
