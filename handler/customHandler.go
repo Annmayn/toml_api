@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"strings"
 	"toml_api/getresource"
+	"toml_api/errorresponse"
 )
+
 
 
 //CustomHandler : redirects according to request method
@@ -24,24 +26,29 @@ func CustomHandler(config interface{}, apiEndPoint map[string][]string,loc []str
 		methods := getresource.GetApiMethods(config, loc[1]) //returns map[string]bool
 		if _, ok := methods[strings.ToLower(r.Method)]; ok {
 			//method allowed
-			fmt.Fprint(w, "Get access allowed")
+			//handle according to method
+			switch r.Method {
+			case "GET":
+				fmt.Println(getresource.GetResource(config,loc[0],loc[1],strings.ToLower(r.Method)))
+			case "POST":
+
+			case "DELETE":
+
+			case "PUT":
+
+			case "PATCH":
+
+			default:
+				errorresponse.ThrowError(w,"Method not recognized!")
+			}
 		} else {
-			//method not allowed
-			fmt.Fprint(w, "Not allowed")
+			//method not allowed  : JSON response
+			errorresponse.ThrowError(w,"Request Method not allowed!")
+
 		}
 
 	}
 	return http.HandlerFunc(fn)
 
-	// //handle according to method
-	// switch r.Method {
-	// case "GET":
 
-	// case "POST":
-	// case "DELETE":
-	// case "PUT":
-	// case "PATCH":
-	// default:
-	// 	fmt.Fprint(w, "Method not recognized")
-	// }
 }

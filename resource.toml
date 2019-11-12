@@ -1,5 +1,5 @@
 [request]
-"auth" = "true"
+"auth" = true
 "formatter" = "default_request_formatter"
 
 [response]
@@ -79,35 +79,35 @@
 [api.detail]
      "endpoint" = '$api.root.endpoint/:id'
 
-        [api.detail.get]
-        "auth" = false
-        "query" = '$schema.user'
-        "display" = { name = "User Name", age = "User Age" }
-        "attachments" = "[father.father, mother.father]"
-        "result" = '$schema.user'
+    [api.detail.get]
+    "auth" = false
+    "query" = '$schema.user'
+    "display" = { name = "User Name", age = "User Age" }
+    "attachments" = "[father.father, mother.father]"
+    "result" = '$schema.user'
 
-        [api.detail.post]
-        "auth" = false
-        "data" = '$schema.user'
-        "validator" = '[$validator.name, $validator.age]'
-        "result" = "$schema.user"
+    [api.detail.post]
+    "auth" = false
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = "$schema.user"
 
-        [api.detail.put]
-        "auth" = false
-        "data" = '$schema.user'
-        "validator" = '[$validator.name, $validator.age]'
-        "result" = '$schema.user'
+    [api.detail.put]
+    "auth" = false
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
-        [api.detail.patch]
-        "auth" = false
-        "data" = '$schema.user'
-        "validator" = '[$validator.name, $validator.age]'
-        "result" = '$schema.user'
+    [api.detail.patch]
+    "auth" = false
+    "data" = '$schema.user'
+    "validator" = '[$validator.name, $validator.age]'
+    "result" = '$schema.user'
 
-        [api.detail.delete]
-        "auth" = false
-        "data" = '$schema.user'
-        "result" = '$schema.user'
+    [api.detail.delete]
+    "auth" = false
+    "data" = '$schema.user'
+    "result" = '$schema.user'
 
 [api.approve]
 "endpoint" = '$api.detail.endpoint/approve'
