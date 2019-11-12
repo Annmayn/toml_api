@@ -22,11 +22,13 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &getConfig)
 
+
 	//authenticate request
 	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
 		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
+
 
 	//perform next steps
 	/*
