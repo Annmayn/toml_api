@@ -10,19 +10,6 @@ import (
 
 parameters::
 
-config interface{}
-package customvalidator
-
-import (
-	"strings"
-
-	"../getresource"
-)
-
-/*
-
-parameters::
-
 1. config interface{}
 
 
@@ -47,7 +34,7 @@ parameters::
 
 */
 
-//Validate : validate name,age
+//Validate
 func Validate(config interface{}, validators []string, schema string, toValidate map[string]interface{}) map[string]string {
 
 	//fmt.Println(toRequired["age"].(string))
