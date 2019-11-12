@@ -1,10 +1,9 @@
 package initializer
 
 import (
+	"github.com/gorilla/mux"
 	"strings"
 	"toml_api/handler"
-
-	"github.com/gorilla/mux"
 )
 
 //todo: validate url
@@ -35,7 +34,7 @@ func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string]
 
 		//store apiEndPoint values of corresponding keys in apiEndPoint in kv
 		kv[ep] = loc
-		r.HandleFunc(ep, handler.CustomHandler(config, kv))
+		r.HandleFunc(ep, handler.CustomHandler(config, kv, loc))
 	}
 	return kv
 }
