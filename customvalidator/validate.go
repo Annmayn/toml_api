@@ -34,8 +34,8 @@ parameters::
 
 returns::
 
-1. data
-2. error
+1. data map[string]interface{}
+2. error map[string]string
 
 */
 
@@ -44,8 +44,10 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 
 	//fmt.Println(toRequired["age"].(string))
 
-	errorResult := make(map[string]string)
+	//error map
+	validityResult := make(map[string]string)
 
+	//data map
 	data := make(map[string]interface{})
 
 	//Compare schema and toValidate data
@@ -118,5 +120,5 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 
 	}
 
-	return data, errorResult
+	return data, validityResult
 }
