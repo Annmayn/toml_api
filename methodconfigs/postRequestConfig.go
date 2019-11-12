@@ -1,8 +1,8 @@
 package methodconfigs
 
 type PostRequestConfig struct{
-	auth bool
-	data string
-	validator []string
-	result string
+	Auth bool `json:"auth"`
+	Data string `json:"data"`
+	Validator []string `json:"validator"`
+	Result string `json:"result"`
 }

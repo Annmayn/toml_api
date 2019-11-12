@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"toml_api/getreqhandler"
 	"toml_api/getresource"
 	"toml_api/errorresponse"
 )
@@ -29,7 +30,8 @@ func CustomHandler(config interface{}, apiEndPoint map[string][]string,loc []str
 			//handle according to method
 			switch r.Method {
 			case "GET":
-				fmt.Println(getresource.GetResource(config,loc[0],loc[1],strings.ToLower(r.Method)))
+				//pass request to GET Request Handler
+				getreqhandler.GetHandler(w, config,loc,r.Method)
 			case "POST":
 
 			case "DELETE":

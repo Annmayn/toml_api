@@ -1,11 +1,12 @@
 package methodconfigs
 
 type GetRequestConfig struct{
-	auth bool
-	query string
-	display interface{}
-	attachments []string
-	result  string
+	Auth bool  `json:"auth"`
+	Query string `json:"query"`
+	QueryParams string `json:"query_params"`
+	Display interface{} `json:"display"`
+	Attachments []string `json:"attachments"`
+	Result  string   `json:"result"`
 }
 
 

@@ -1,9 +1,9 @@
 package methodconfigs
 
 type PatchRequestConfig struct{
-	auth bool
-	schema string
-	data string 
-	validator []string
-	result string
+	Auth bool   `json:"auth"`
+	Schema string	`json:"schema"`
+	Data string 	`json:"data"`
+	Validator []string	`json:"validator"`
+	Result string	`json:"result"`
 }

@@ -1,7 +1,7 @@
 package methodconfigs
 
 type DeleteRequestConfig struct{
-	auth bool
-	data string
-	result string
+	Auth bool `json:"auth"`
+	Data string	`json:"data"`
+	Result string	`json:"result"`
 }
