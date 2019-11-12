@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"toml_api/initializer"
-
 	"github.com/gorilla/mux"
 )
 
@@ -25,7 +23,7 @@ func main() {
 	//todo: return error
 	//initialize router to handle and validate all endpoints
 	apiEndPoint = initializer.InitializeRouter(router, config, apiEndPoint)
-	fmt.Println("Main: apeEndPoint -> ", apiEndPoint)
+	fmt.Println("Main: apiEndPoint -> ", apiEndPoint)
 
 	// router.HandleFunc("/*any", handler.CustomHandler(config, apiEndPoint))
 	// router.GET("/*any", handler.CustomHandler(apiEndPoint))
