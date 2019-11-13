@@ -44,7 +44,7 @@ func PatchHandler(w http.ResponseWriter, r *http.Request, config interface{}, lo
 	//verify incoming data according to schema and patch
 	data:=make(map[string]interface{})
 	//
-	if strings.Compare(r.Header.Get("Content-Type"),"application/json")!=0{
+	if strings.Compare(r.Header.Get("Content-Type"),strings.Trim(r.Header.Get("Content-Type"),"\n"))!=0{
 		errorresponse.ThrowError(w,"Content-Type Header is not application/json")
 		return
 	}
