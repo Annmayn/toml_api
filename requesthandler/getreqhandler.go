@@ -2,7 +2,6 @@ package requesthandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"toml_api/authenticator"
 	"toml_api/errorresponse"
@@ -39,17 +38,9 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 
 	//send response
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(result)
 	return
 
-
-	/*
-		TODO:
-			1. Auth [Status : Pseudo Implementation]
-			2. Query table with attachments
-			3. Get Results and send ```result``` & ```display``` response to client
-	*/
-	fmt.Fprintf(w, "i am in get handler")
 
 }
