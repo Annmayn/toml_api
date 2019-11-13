@@ -12,7 +12,7 @@
     [schema.user]
     "name" = "string"
     "age" = "int!"
-    "weight" = "double"
+    "weight" = "float64"
 
     [schema.father]
     "file" = "father.toml"

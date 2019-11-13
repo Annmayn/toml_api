@@ -1,6 +1,7 @@
 package customvalidator
 
 import (
+	"fmt"
 	"strings"
 
 	"toml_api/getresource"
@@ -39,12 +40,53 @@ returns::
 
 */
 
-//Validate
+//validate type
+func ValidateType(toValidate map[string]interface{}, dataTypeOfSchema map[string]string) (map[string]string, bool) {
+
+	typeError := make(map[string]string)
+
+	var hasError bool = false
+
+	for i, v := range toValidate {
+		typeOfData := fmt.Sprintf("%T", v)
+
+		if typeOfData == "float64" {
+			if float64(int(v.(float64))) == v.(float64) {
+
+				if dataTypeOfSchema[i] != "int" {
+					typeError[i] = dataTypeOfSchema[i] + " required"
+				}
+
+			} else {
+				if dataTypeOfSchema[i] != "float64" {
+					typeError[i] = dataTypeOfSchema[i] + " required"
+				}
+
+			}
+		} else if dataTypeOfSchema[i] != typeOfData {
+			typeError[i] = dataTypeOfSchema[i] + " required"
+		}
+
+	}
+
+	if len(typeError) > 0 {
+		hasError = true
+	}
+
+	return typeError, hasError
+
+}
+
+//main validate function
 func Validate(config interface{}, validators []string, schema string, toValidate map[string]interface{}) (map[string]interface{}, map[string]string) {
 
 	//fmt.Println(toRequired["age"].(string))
 
+	//error map
 	validityResult := make(map[string]string)
+
+	//type error map
+	typeValidityResult := make(map[string]string)
 
 	data := make(map[string]interface{})
 
@@ -55,6 +97,27 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 	// resources[0][1:] ::  $schema =>schema
 	toRequired := (getresource.GetResource(config, resources[0][1:], resources[1])).(map[string]interface{})
 
+	//data type of schema
+	dataTypeOfSchema := make(map[string]string)
+	for i, v := range toRequired {
+
+		dataType := v.(string)
+
+		if dataType[len(dataType)-1] == '!' {
+			dataTypeOfSchema[i] = dataType[:len(dataType)-1]
+		} else {
+			dataTypeOfSchema[i] = dataType
+		}
+
+	}
+
+	// validate type
+	typeValidityResult, hasTypeError := ValidateType(toValidate, dataTypeOfSchema)
+
+	if hasTypeError {
+		return data, typeValidityResult
+	}
+
 	//get all data within schema
 	for i, v := range toValidate {
 		if _, ok := toRequired[i]; ok {
@@ -62,9 +125,12 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 		}
 	}
 
+	//test for required data
 	for i, v := range toRequired {
-		temp := v.(string)
-		if temp[len(temp)-1:] == "!" {
+		dataType := v.(string)
+
+		// if data type has ! in last i.e required data type
+		if dataType[len(dataType)-1:] == "!" {
 			if _, ok := toValidate[i]; !ok {
 				validityResult[i] = "required"
 			}
