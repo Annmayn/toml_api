@@ -40,6 +40,11 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, config interface{}, l
 
 	if _, ok := fileKV[deleteKey]; ok {
 		fileio.WriteToFile("{}")
+		m := map[string]interface{}{deleteKey: fileKV[deleteKey]}
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(201)
+		json.NewEncoder(w).Encode(m)
 	} else {
 		errorresponse.ThrowError(w, "item not found")
 	}
