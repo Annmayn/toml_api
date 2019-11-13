@@ -32,10 +32,10 @@ func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 
 	var schema string=putConfig.Data
 
-	//s:=strings.Replace(schema,"$","",1)
-	//sch:=strings.Split(s,".")
+	s:=strings.Replace(schema,"$","",1)
+	sch:=strings.Split(s,".")
 
-	//schemaData:=getresource.GetResource(config,sch[0],sch[1])
+	schemaData:=getresource.GetResource(config,sch[0],sch[1])
 
 	//verify incoming data according to schema and patch
 	data:=make(map[string]interface{})
@@ -94,13 +94,16 @@ func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 
 	//put new data
 	dataToWrite:=make(map[string]interface{})
-	for key,_:=range queryResults.(map[string]interface{}){
+
+	for key,_:=range schemaData.(map[string]interface{}){
 		if _,ok:=necessaryData[key];ok{
+			dataToWrite[key]=necessaryData[key]
+		}else if resultFields[key]{
 			dataToWrite[key]=necessaryData[key]
 		}
 	}
 
-	//write new data
+		//write new data
 	fileio.WriteToFile(dataToWrite)
 
 	//send response according to schema specified in ```result```

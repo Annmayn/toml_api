@@ -36,10 +36,10 @@ func PatchHandler(w http.ResponseWriter, r *http.Request, config interface{}, lo
 		schema=patchConfig.Data
 	}
 
-	//s:=strings.Replace(schema,"$","",1)
-	//sch:=strings.Split(s,".")
+	s:=strings.Replace(schema,"$","",1)
+	sch:=strings.Split(s,".")
 
-	//schemaData:=getresource.GetResource(config,sch[0],sch[1])
+	schemaData:=getresource.GetResource(config,sch[0],sch[1])
 
 	//verify incoming data according to schema and patch
 	data:=make(map[string]interface{})
@@ -102,12 +102,16 @@ func PatchHandler(w http.ResponseWriter, r *http.Request, config interface{}, lo
 
 	//patch data
 	dataToWrite:=make(map[string]interface{})
-	for key,val:=range queryResults.(map[string]interface{}){
+	for key,_:=range schemaData.(map[string]interface{}){
 		if _,ok:=patchFields[key];ok{
 			v:=necessaryData[key]
 			dataToWrite[key]=v
 		}else{
-			dataToWrite[key]=val
+			for k,v:=range queryResults.(map[string]interface{}){
+				if k==key{
+					dataToWrite[key]=v
+				}
+			}
 		}
 
 	}
