@@ -37,7 +37,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 	}
 
 	//necessary data and error result
-	necessaryData, validityResult := customvalidator.Validate(config, putConfig.Validator, putConfig.Data, data)
+	necessaryData, validityResult := customvalidator.Validate(config, postConfig.Validator, postConfig.Data, data)
 
 	dataRequired := make(map[string]string)
 
