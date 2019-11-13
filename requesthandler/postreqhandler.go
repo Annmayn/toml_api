@@ -21,19 +21,23 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &postConfig)
 
-	r.ParseForm()
+	//authenticate request
+	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
+		errorresponse.ThrowError(w, "Request not authorized!")
+		return
+	}
 
 	data := make(map[string]interface{})
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		errorresponse.ThrowError(w,"Error while decoding incoming data")
+		errorresponse.ThrowError(w, "Error while decoding incoming data")
 		return
 	}
 
 	//necessary data and error result
-	necessaryData, validityResult := customvalidator.Validate(config, postConfig.Validator, postConfig.Data, data)
+	necessaryData, validityResult := customvalidator.Validate(config, putConfig.Validator, putConfig.Data, data)
 
 	dataRequired := make(map[string]string)
 
@@ -48,15 +52,14 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 		w.WriteHeader(404)
 		json.NewEncoder(w).Encode(dataRequired)
 		return
+	} else if len(validityResult) > 0 {
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(404)
+		json.NewEncoder(w).Encode(validityResult)
+		return
 	}
 
 	fileio.WriteToFile(necessaryData)
-
-	//authenticate request
-	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
-		errorresponse.ThrowError(w, "Request not authorized!")
-		return
-	}
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(201)
