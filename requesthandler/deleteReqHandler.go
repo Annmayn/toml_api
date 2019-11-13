@@ -2,10 +2,11 @@ package requesthandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"strings"
 	"toml_api/authenticator"
 	"toml_api/errorresponse"
+	"toml_api/fileio"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 )
@@ -13,8 +14,9 @@ import (
 //config for DELETE Request
 var deleteConfig methodconfigs.DeleteRequestConfig
 
-//handle all incoming DELETE requests here
+//DeleteHandler : handles all incoming DELETE requests
 func DeleteHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc []string) {
+	var deleteKey string
 	resource := getresource.GetResource(config, loc[0], loc[1], "delete")
 
 	b, _ := json.Marshal(resource)
@@ -26,12 +28,19 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, config interface{}, l
 		return
 	}
 
-	/*
-		TODO:
-			1. Auth
-			2. Query table with attachments
-			3. Get Results and send ```result``` & ```display``` response to client
-	*/
-	fmt.Fprintf(w, "i am in delete handler")
+	fileContent := fileio.ReadFromFile()
+	fileKV := fileContent.(map[string]interface{})
+	urlArr := strings.Split(r.URL.String(), "/")
+	if urlArr[len(urlArr)-1] == "/" {
+		deleteKey = urlArr[len(urlArr)-2]
+	} else {
+		deleteKey = urlArr[len(urlArr)-1]
 
+	}
+
+	if _, ok := fileKV[deleteKey]; ok {
+		fileio.WriteToFile("{}")
+	} else {
+		errorresponse.ThrowError(w, "item not found")
+	}
 }
