@@ -2,7 +2,6 @@ package requesthandler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"toml_api/authenticator"
 	"toml_api/customvalidator"
@@ -29,7 +28,8 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		log.Println(err)
+		errorresponse.ThrowError(w,"Error while decoding incoming data")
+		return
 	}
 
 	//necessary data and error result
