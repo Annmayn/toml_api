@@ -2,7 +2,6 @@ package requesthandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"toml_api/authenticator"
@@ -59,12 +58,8 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 		return
 	}
 
-	/*
-		TODO:
-			1. Auth
-			2. Query table with attachments
-			3. Get Results and send ```result``` & ```display``` response to client
-	*/
-	fmt.Fprintf(w, "i am in POST handler")
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(201)
+	json.NewEncoder(w).Encode(necessaryData)
 
 }
