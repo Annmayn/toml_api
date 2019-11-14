@@ -2,6 +2,7 @@ package customvalidator
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"toml_api/getresource"
@@ -47,11 +48,13 @@ func ValidateType(toValidate map[string]interface{}, dataTypeOfSchema map[string
 
 	var hasError bool = false
 
+	fmt.Println(dataTypeOfSchema)
+
 	for i, v := range toValidate {
 		typeOfData := fmt.Sprintf("%T", v)
 
 		if typeOfData == "float64" {
-			if float64(int(v.(float64))) == v.(float64) {
+			if math.Trunc(v.(float64)) == v.(float64) {
 
 				if dataTypeOfSchema[i] != "int" {
 					typeError[i] = dataTypeOfSchema[i] + " required"
