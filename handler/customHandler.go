@@ -38,7 +38,6 @@ func CustomHandler(config interface{}, apiEndPoint map[string][]string, loc []st
 			case "PUT":
 				//pass request to PUT Request Handler
 				requesthandler.PutHandler(w, r, config, loc)
-
 			case "PATCH":
 				requesthandler.PatchHandler(w, r, config, loc)
 			default:

@@ -9,6 +9,7 @@ import (
 	"toml_api/fileio"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
+	"toml_api/responsehandler"
 )
 
 //config for POST Request
@@ -48,21 +49,18 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 	}
 
 	if len(dataRequired) > 0 {
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(404)
-		json.NewEncoder(w).Encode(dataRequired)
+		//send JSON response
+		responsehandler.SendJSONResponse(w,dataRequired,404)
 		return
 	} else if len(validityResult) > 0 {
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(404)
-		json.NewEncoder(w).Encode(validityResult)
+		//send JSON response
+		responsehandler.SendJSONResponse(w,validityResult,404)
 		return
 	}
 
 	fileio.WriteToFile(necessaryData)
 
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(201)
-	json.NewEncoder(w).Encode(necessaryData)
-
+	//send JSON response
+	responsehandler.SendJSONResponse(w,necessaryData,201)
+	return
 }

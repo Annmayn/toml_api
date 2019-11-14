@@ -11,6 +11,7 @@ import (
 	"toml_api/fileio"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
+	"toml_api/responsehandler"
 )
 
 //config for PUT Request
@@ -63,14 +64,10 @@ func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	}
 
 	if len(dataRequired) > 0 {
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(404)
-		json.NewEncoder(w).Encode(dataRequired)
+		responsehandler.SendJSONResponse(w,dataRequired,404)
 		return
 	} else if len(validityResult) > 0 {
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(404)
-		json.NewEncoder(w).Encode(validityResult)
+		responsehandler.SendJSONResponse(w,validityResult,404)
 		return
 	}
 
@@ -115,8 +112,6 @@ func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 		}
 	}
 
-	w.Header().Add("Content-Type","application/json")
-	w.WriteHeader(201)
-	json.NewEncoder(w).Encode(response)
+	responsehandler.SendJSONResponse(w,response,201)
 	return
 }

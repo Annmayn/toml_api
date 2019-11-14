@@ -9,6 +9,7 @@ import (
 	"toml_api/fileio"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
+	"toml_api/responsehandler"
 )
 
 //config for DELETE Request
@@ -41,11 +42,11 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, config interface{}, l
 	if _, ok := fileKV[deleteKey]; ok {
 		fileio.WriteToFile("{}")
 		m := map[string]interface{}{deleteKey: fileKV[deleteKey]}
-
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(201)
-		json.NewEncoder(w).Encode(m)
+		//send JSON response
+		responsehandler.SendJSONResponse(w,m,200)
+		return
 	} else {
+		//throw error
 		errorresponse.ThrowError(w, "item not found")
 	}
 }

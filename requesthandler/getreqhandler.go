@@ -8,6 +8,7 @@ import (
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 	"toml_api/query"
+	"toml_api/responsehandler"
 )
 
 //config for GET Request
@@ -37,9 +38,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	result:= query.QueryHandler(config,getConfig.Query,getConfig.QueryParams,getConfig.Result, getConfig.Attachments)
 
 	//send response
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(result)
+	responsehandler.SendJSONResponse(w,result,200)
 	return
 
 

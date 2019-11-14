@@ -48,8 +48,6 @@ func ValidateType(toValidate map[string]interface{}, dataTypeOfSchema map[string
 
 	var hasError bool = false
 
-	fmt.Println(dataTypeOfSchema)
-
 	for i, v := range toValidate {
 		typeOfData := fmt.Sprintf("%T", v)
 
