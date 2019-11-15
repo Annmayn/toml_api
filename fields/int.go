@@ -1,20 +1,24 @@
-type IntStruct struct{
-	value int
-	min_value int
-	max_value int
-	range_value []int 
-	err_min string
-	err_max string
-	err_range string
-}
-var Int Intstruct
+package fields
 
-func (*in IntStruct) Validate(errorMap map[string]string){
-	if in.value < in.min_value{
-		errorMap[in.value] = in.err_min
-	}else if in.value > in.max_value{
-		errorMap[in.value] = in.err_max
-	}else if in.value < n.range_value[0] || n.value > n.range_value[1]{
-		errorMap[in.value] = in.err_range
+//IntStruct : struct of int data type
+type IntStruct struct {
+	minValue   int
+	maxValue   int
+	rangeValue []int
+	errMin     string
+	errMax     string
+	errRange   string
+}
+
+//Validate : validates int structure
+func (in *IntStruct) Validate(n int, field string, errorMap map[string]string) {
+	if n < in.minValue {
+		errorMap[field] = in.errMin
+
+	} else if n > in.maxValue {
+		errorMap[field] = in.errMax
+
+	} else if n < in.rangeValue[0] || n > in.rangeValue[1] {
+		errorMap[field] = in.errRange
 	}
 }
