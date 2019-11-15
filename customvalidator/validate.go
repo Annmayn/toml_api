@@ -1,11 +1,14 @@
 package customvalidator
 
 import (
+	"errors"
 	"fmt"
-	"math"
 	"strings"
 
 	"toml_api/getresource"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 /*
@@ -42,40 +45,42 @@ returns::
 */
 
 //validate type
-func ValidateType(toValidate map[string]interface{}, dataTypeOfSchema map[string]string) (map[string]string, bool) {
+func ValidateType(toValidate map[string]interface{}, schema map[string]string) (map[string]string, bool) {
 
-	typeError := make(map[string]string)
+	errorMap := make(map[string]string)
 
 	var hasError bool = false
 
-	for i, v := range toValidate {
-		typeOfData := fmt.Sprintf("%T", v)
+	for k, v := range schema {
 
-		if typeOfData == "float64" {
-			if math.Trunc(v.(float64)) == v.(float64) {
+		if _, ok := toValidate[k]; ok {
+			// fmt.Println(toValidate[k])
+			var err error
 
-				if dataTypeOfSchema[i] != "int" {
-					typeError[i] = dataTypeOfSchema[i] + " required"
-				}
+			switch strings.Split(v, "!")[0] { //remove last "!"
+			case "string":
+				err = validation.Validate(toValidate[k], is.Alpha)
 
-			} else {
-				if dataTypeOfSchema[i] != "float64" {
-					typeError[i] = dataTypeOfSchema[i] + " required"
-				}
+			case "int":
+				tmp := fmt.Sprintf("%g", toValidate[k])
+				err = validation.Validate(tmp, is.Int)
 
+			case "float64":
+				tmp := fmt.Sprintf("%g", toValidate[k])
+				err = validation.Validate(tmp, is.Float)
+			default:
+				err = errors.New("couldn't decode type")
 			}
-		} else if dataTypeOfSchema[i] != typeOfData {
-			typeError[i] = dataTypeOfSchema[i] + " required"
+			if err != nil {
+				hasError = true
+				errorMap[k] = err.Error()
+			}
 		}
 
 	}
-
-	if len(typeError) > 0 {
-		hasError = true
-	}
-
-	return typeError, hasError
-
+	fmt.Println(schema)
+	fmt.Println(errorMap)
+	return errorMap, hasError
 }
 
 //main validate function
