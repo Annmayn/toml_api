@@ -44,20 +44,16 @@ returns::
 
 */
 
-//validate type
-func ValidateType(toValidate map[string]interface{}, schema map[string]string) (map[string]string, bool) {
-
-	errorMap := make(map[string]string)
+//validates the variable type in request body against schema definition
+func ValidateType(toValidate map[string]interface{}, schema map[string]string, errorMap map[string]string) bool {
 
 	var hasError bool = false
 
 	for k, v := range schema {
-
 		if _, ok := toValidate[k]; ok {
 			// fmt.Println(toValidate[k])
 			var err error
-
-			switch strings.Split(v, "!")[0] { //remove last "!"
+			switch v {
 			case "string":
 				err = validation.Validate(toValidate[k], is.Alpha)
 
@@ -68,9 +64,11 @@ func ValidateType(toValidate map[string]interface{}, schema map[string]string) (
 			case "float64":
 				tmp := fmt.Sprintf("%g", toValidate[k])
 				err = validation.Validate(tmp, is.Float)
+
 			default:
 				err = errors.New("couldn't decode type")
 			}
+
 			if err != nil {
 				hasError = true
 				errorMap[k] = err.Error()
@@ -78,117 +76,120 @@ func ValidateType(toValidate map[string]interface{}, schema map[string]string) (
 		}
 
 	}
-	fmt.Println(schema)
-	fmt.Println(errorMap)
-	return errorMap, hasError
+	return hasError
 }
 
+func checkIfExists(field string, toValidate map[string]interface{}, errorMap map[string]string) error {
+	var err error
+	if _, ok := toValidate[field]; !ok {
+		errorMap[field] = "field required"
+		err = errors.New("missing field")
+	}
+	return err
+}
+
+// func schemaValidation(data map[string]interface{}, errorMap map[string]string) bool {
+// 	for _, v := range validators {
+// 		validator := strings.Split(v, ".")
+
+// 		//type of validation
+// 		i := validator[1]
+
+// 		validMap := getresource.GetValidator(config, i).([]map[string]interface{})
+// 		for _, x := range validMap {
+
+// 			title := x["type"].(string)
+
+// 			// Split type eg. string.min_length
+
+// 			s := strings.Split(title, ".")
+
+// 			if _, ok := toValidate[i]; ok {
+// 				switch s[0] {
+// 				case "string":
+// 					if s[1] == "min_length" {
+// 						if len(toValidate[i].(string)) < int(x["value"].(int64)) {
+// 							validityResult[i] = x["error"].(string)
+// 						}
+// 					} else if s[1] == "max_length" {
+// 						if len(toValidate[i].(string)) > int(x["value"].(int64)) {
+// 							validityResult[i] = x["error"].(string)
+// 						}
+
+// 					}
+// 				case "int":
+// 					if s[1] == "min_value" {
+// 						if int(toValidate[i].(float64)) < int(x["value"].(int64)) {
+// 							validityResult[i] = x["error"].(string)
+// 						}
+// 					} else if s[1] == "max_value" {
+// 						if int(toValidate[i].(float64)) > int(x["value"].(int64)) {
+// 							validityResult[i] = x["error"].(string)
+// 						}
+
+// 					}
+// 				}
+
+// 			}
+
+// 		}
+
+// 	}
+// }
+
 //main validate function
+//schema: $schema.father, $schema.mother etc
 func Validate(config interface{}, validators []string, schema string, toValidate map[string]interface{}) (map[string]interface{}, map[string]string) {
 
 	//fmt.Println(toRequired["age"].(string))
 
 	//error map
-	validityResult := make(map[string]string)
-
-	//type error map
-	typeValidityResult := make(map[string]string)
-
-	data := make(map[string]interface{})
+	errorMap := make(map[string]string)
 
 	//Compare schema and toValidate data
-
-	resources := strings.Split(schema, ".")
+	//schema : $schema.user
+	resources := strings.Split(schema, ".") //[$schema, user]
 
 	// resources[0][1:] ::  $schema =>schema
 	toRequired := (getresource.GetResource(config, resources[0][1:], resources[1])).(map[string]interface{})
 
 	//data type of schema
 	dataTypeOfSchema := make(map[string]string)
-	for i, v := range toRequired {
 
-		dataType := v.(string)
-
+	for field, dType := range toRequired {
+		dataType := dType.(string)
 		if dataType[len(dataType)-1] == '!' {
-			dataTypeOfSchema[i] = dataType[:len(dataType)-1]
+			dataTypeOfSchema[field] = dataType[:len(dataType)-1]
+			//check if required values exists in body
+			//todo
+			_ = checkIfExists(field, toValidate, errorMap)
 		} else {
-			dataTypeOfSchema[i] = dataType
+			dataTypeOfSchema[field] = dataType
 		}
-
+	}
+	if len(errorMap) != 0 {
+		return map[string]interface{}{}, errorMap
 	}
 
-	// validate type
-	typeValidityResult, hasTypeError := ValidateType(toValidate, dataTypeOfSchema)
+	// validate type : returns error and updates errorMap
+	hasTypeError := ValidateType(toValidate, dataTypeOfSchema, errorMap)
 
 	if hasTypeError {
-		return data, typeValidityResult
+		return map[string]interface{}{}, errorMap
 	}
 
 	//get all data within schema
+	data := make(map[string]interface{})
 	for i, v := range toValidate {
 		if _, ok := toRequired[i]; ok {
 			data[i] = v
 		}
 	}
 
-	//test for required data
-	for i, v := range toRequired {
-		dataType := v.(string)
+	// hasSchemaError := schemaValidation(data, errorMap)
+	// if hasSchemaError {
+	// 	return data, errorMap
+	// }
 
-		// if data type has ! in last i.e required data type
-		if dataType[len(dataType)-1:] == "!" {
-			if _, ok := toValidate[i]; !ok {
-				validityResult[i] = "required"
-			}
-		}
-	}
-
-	for _, v := range validators {
-		validator := strings.Split(v, ".")
-
-		//type of validation
-		i := validator[1]
-
-		validMap := getresource.GetValidator(config, i).([]map[string]interface{})
-		for _, x := range validMap {
-
-			title := x["type"].(string)
-
-			// Split type eg. string.min_length
-
-			s := strings.Split(title, ".")
-
-			if _, ok := toValidate[i]; ok {
-				switch s[0] {
-				case "string":
-					if s[1] == "min_length" {
-						if len(toValidate[i].(string)) < int(x["value"].(int64)) {
-							validityResult[i] = x["error"].(string)
-						}
-					} else if s[1] == "max_length" {
-						if len(toValidate[i].(string)) > int(x["value"].(int64)) {
-							validityResult[i] = x["error"].(string)
-						}
-
-					}
-				case "int":
-					if s[1] == "min_value" {
-						if int(toValidate[i].(float64)) < int(x["value"].(int64)) {
-							validityResult[i] = x["error"].(string)
-						}
-					} else if s[1] == "max_value" {
-						if int(toValidate[i].(float64)) > int(x["value"].(int64)) {
-							validityResult[i] = x["error"].(string)
-						}
-
-					}
-				}
-
-			}
-
-		}
-
-	}
-
-	return data, validityResult
+	return data, errorMap
 }
