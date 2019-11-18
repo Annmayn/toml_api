@@ -3,6 +3,8 @@ package initializer
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"toml_api/expand"
 
@@ -91,4 +93,11 @@ func InitializeRoutes(resourceLocation string) (map[string]interface{}, map[stri
 
 	//return configuration and key-value pair
 	return configInterface.(map[string]interface{}), kv, nil
+}
+
+func RemoveTrailingSlash(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
+		next.ServeHTTP(w, r)
+	})
 }

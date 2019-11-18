@@ -29,7 +29,7 @@ func parseEndpoint(endpoint string) string {
 	Returns the new key-value pair mapping enpoint to schema location
 */
 func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string][]string) map[string][]string {
-	r.StrictSlash(true)
+	// r.StrictSlash(true)
 	kv := make(map[string][]string)
 	for endpoint, loc := range apiEndPoint {
 		ep := parseEndpoint(endpoint)

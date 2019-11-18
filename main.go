@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"toml_api/initializer"
+
 	"github.com/gorilla/mux"
 )
 
@@ -32,5 +33,5 @@ func main() {
 	// // router.HandlerFunc("DELETE", "/*any", handler.customHandler)
 	// // router.HandlerFunc("PATCH", "/*any", handler.customHandler)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", initializer.RemoveTrailingSlash(router)))
 }
