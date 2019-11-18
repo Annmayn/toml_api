@@ -95,7 +95,10 @@ func schemaValidation(config interface{}, data map[string]interface{}, validator
 		validatorField := strings.Split(v, ".")[1]
 
 		fieldSchema := getresource.GetValidator(config, validatorField).([]map[string]interface{})
+
+
 		for _, schema := range fieldSchema { //for each schema in array of schemas such as $validator.name ([]interface{})
+
 			fieldValidator.ValidateField(data[validatorField], schema, errorMap)
 		}
 	}
@@ -168,6 +171,8 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 
 	// resources[0][1:] ::  $schema =>schema
 	toRequired := (getresource.GetResource(config, resources[0][1:], resources[1])).(map[string]interface{})
+
+	fmt.Println(toRequired)
 
 	//data type of schema
 	dataTypeOfSchema := make(map[string]string)
