@@ -98,7 +98,12 @@ func schemaValidation(config interface{}, data map[string]interface{}, validator
 		//Problem : Concurrent write problem originate here
 		fieldSchema := getresource.GetValidator(config, validatorField).([]map[string]interface{})
 		for _, schema := range fieldSchema { //for each schema in array of schemas such as $validator.name ([]interface{})
-			errorMap = fieldValidator.ValidateField(data[validatorField], schema)
+			errorField := fieldValidator.ValidateField(data[validatorField], schema)
+
+			if len(errorField) != 0 {
+				errorMap[validatorField] = errorField
+			}
+
 		}
 	}
 
