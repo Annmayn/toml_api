@@ -24,6 +24,7 @@ func main() {
 	//todo: return error
 	//initialize router to handle and validate all endpoints
 	apiEndPoint = initializer.InitializeRouter(router, config, apiEndPoint)
+	initializer.InitializeConfiguration(config)
 	fmt.Println("Main: apiEndPoint -> ", apiEndPoint)
 
 	// router.HandleFunc("/*any", handler.CustomHandler(config, apiEndPoint))
