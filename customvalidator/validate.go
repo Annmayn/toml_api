@@ -46,9 +46,10 @@ returns::
 */
 
 //validates the variable type in request body against schema definition
-func ValidateType(toValidate map[string]interface{}, schema map[string]string, errorMap map[string]string) bool {
+func ValidateType(toValidate map[string]interface{}, schema map[string]string) (bool, map[string]string) {
 
 	var hasError bool = false
+	errorMap := make(map[string]string)
 
 	for k, v := range schema {
 		if _, ok := toValidate[k]; ok {
@@ -77,33 +78,34 @@ func ValidateType(toValidate map[string]interface{}, schema map[string]string, e
 		}
 
 	}
-	return hasError
+	return hasError, errorMap
 }
 
-func checkIfExists(field string, toValidate map[string]interface{}, errorMap map[string]string) error {
-	var err error
+func checkIfExists(field string, toValidate map[string]interface{}) map[string]string {
+	errorMap := make(map[string]string)
 	if _, ok := toValidate[field]; !ok {
 		errorMap[field] = "cannot be blank"
-		err = errors.New("cannot be blank")
 	}
-	return err
+	return errorMap
 }
 
-func schemaValidation(config interface{}, data map[string]interface{}, validators []string, errorMap map[string]string) bool {
+func schemaValidation(config interface{}, data map[string]interface{}, validators []string) (bool, map[string]string) {
 	var hasSchemaError bool = false
+	errorMap := make(map[string]string)
 	for _, v := range validators { //eg validators: [$validator.name, $validator.age]
 		validatorField := strings.Split(v, ".")[1]
 
+		//Problem : Concurrent write problem originate here
 		fieldSchema := getresource.GetValidator(config, validatorField).([]map[string]interface{})
 		for _, schema := range fieldSchema { //for each schema in array of schemas such as $validator.name ([]interface{})
-			fieldValidator.ValidateField(data[validatorField], schema, errorMap)
+			errorMap = fieldValidator.ValidateField(data[validatorField], schema)
 		}
 	}
 
 	if len(errorMap) != 0 {
 		hasSchemaError = true
 	}
-	return hasSchemaError
+	return hasSchemaError, errorMap
 
 	// 	for _, v := range validators {
 	// 		validator := strings.Split(v, ".")
@@ -160,7 +162,7 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 	//fmt.Println(toRequired["age"].(string))
 
 	//error map
-	errorMap := make(map[string]string)
+	// errorMap := make(map[string]string)
 
 	//Compare schema and toValidate data
 	//schema : $schema.user
@@ -178,17 +180,17 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 			dataTypeOfSchema[field] = dataType[:len(dataType)-1]
 			//check if required values exists in body
 			//todo
-			_ = checkIfExists(field, toValidate, errorMap)
+			errorMap := checkIfExists(field, toValidate)
+			if len(errorMap) != 0 {
+				return map[string]interface{}{}, errorMap
+			}
 		} else {
 			dataTypeOfSchema[field] = dataType
 		}
 	}
-	if len(errorMap) != 0 {
-		return map[string]interface{}{}, errorMap
-	}
 
 	// validate type : returns error and updates errorMap
-	hasTypeError := ValidateType(toValidate, dataTypeOfSchema, errorMap)
+	hasTypeError, errorMap := ValidateType(toValidate, dataTypeOfSchema)
 
 	if hasTypeError {
 		return map[string]interface{}{}, errorMap
@@ -202,10 +204,10 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 		}
 	}
 
-	hasSchemaError := schemaValidation(config, data, validators, errorMap)
+	hasSchemaError, errorMap := schemaValidation(config, data, validators)
 	if hasSchemaError {
 		return data, errorMap
 	}
 
-	return data, errorMap
+	return data, map[string]string{}
 }

@@ -3,8 +3,6 @@ package getresource
 import (
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 )
 
 /*
@@ -58,44 +56,32 @@ val:=getresource.GetResource(c,"api","root","put","validator")
 //replaces $value by their corresponding values
 //function returns nil if validator config is not in array form
 func GetValidator(config interface{}, validatorName string) interface{} {
-	config = config.(map[string]interface{})["validator"]
+	confg := config.(map[string]interface{})["validator"]
 
-	if len(validatorName) == 0 {
-		//this is not working as of now 11:11
-		switch newConfig := config.(type) {
-		case []map[string]interface{}:
-			for _, v := range newConfig {
-				switch v["value"].(type) {
-				case string:
-					v["error"] = strings.Replace(v["error"].(string), "$value", v["value"].(string), 1)
+	//TODO: Get full validator schema if validatorName not provided
+	/////////////////////////////////////
+	// if len(validatorName) == 0 {
+	// 	//this is not working as of now 11:11
+	// 	switch newConfig := confg.(type) {
+	// 	case []map[string]interface{}:
+	// 		for _, v := range newConfig {
+	// 			switch v["value"].(type) {
+	// 			case string:
+	// 				v["error"] = strings.Replace(v["error"].(string), "$value", v["value"].(string), 1)
 
-				case int64:
-					str := strconv.Itoa(int(v["value"].(int64)))
-					v["error"] = strings.Replace(v["error"].(string), "$value", str, 1)
-				}
-			}
-			return newConfig
-		}
+	// 			case int64:
+	// 				str := strconv.Itoa(int(v["value"].(int64)))
+	// 				v["error"] = strings.Replace(v["error"].(string), "$value", str, 1)
+	// 			}
+	// 		}
+	// 		return newConfig
+	// 	}
 
-	} else {
-		config = config.(map[string]interface{})[validatorName]
-		switch newConfig := config.(type) {
-		case []map[string]interface{}:
-			for _, v := range newConfig {
-				switch v["value"].(type) {
-				case string:
-					v["error"] = strings.Replace(v["error"].(string), "$value", v["value"].(string), 1)
+	// } else {
+	// 	return confg.(map[string]interface{})[validatorName]
 
-				case int64:
-					str := strconv.Itoa(int(v["value"].(int64)))
-					v["error"] = strings.Replace(v["error"].(string), "$value", str, 1)
-				}
-			}
-			return newConfig
-		}
-
-	}
-	return nil
+	// }
+	return confg.(map[string]interface{})[validatorName]
 }
 
 //get set of methods for requestLevel

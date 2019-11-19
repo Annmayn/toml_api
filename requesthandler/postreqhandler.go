@@ -3,14 +3,16 @@ package requesthandler
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 	"toml_api/authenticator"
 	"toml_api/customvalidator"
 	"toml_api/errorresponse"
-	"toml_api/fileio"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 	"toml_api/responsehandler"
 )
+
+var mutex = sync.Mutex{}
 
 //config for POST Request
 var postConfig methodconfigs.PostRequestConfig
@@ -50,17 +52,17 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 
 	if len(dataRequired) > 0 {
 		//send JSON response
-		responsehandler.SendJSONResponse(w,dataRequired,404)
+		responsehandler.SendJSONResponse(w, dataRequired, 404)
 		return
 	} else if len(validityResult) > 0 {
 		//send JSON response
-		responsehandler.SendJSONResponse(w,validityResult,404)
+		responsehandler.SendJSONResponse(w, validityResult, 404)
 		return
 	}
 
-	fileio.WriteToFile(necessaryData)
+	// fileio.WriteToFile(necessaryData)
 
 	//send JSON response
-	responsehandler.SendJSONResponse(w,necessaryData,201)
+	responsehandler.SendJSONResponse(w, necessaryData, 201)
 	return
 }

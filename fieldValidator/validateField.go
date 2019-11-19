@@ -6,8 +6,9 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-func ValidateField(fieldValue interface{}, schema map[string]interface{}, errorMap map[string]string) {
+func ValidateField(fieldValue interface{}, schema map[string]interface{}) map[string]string {
 	var err error
+	errorMap := make(map[string]string)
 	cval := schema["value"]
 
 	switch schema["type"].(string) {
@@ -34,5 +35,7 @@ func ValidateField(fieldValue interface{}, schema map[string]interface{}, errorM
 	if err != nil {
 		errorMap[schema["field"].(string)] = err.Error()
 		fmt.Println(errorMap)
+		return errorMap
 	}
+	return errorMap
 }

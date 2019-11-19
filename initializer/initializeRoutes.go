@@ -54,6 +54,25 @@ import (
 // 	}
 ////////////************************************///////////
 
+//InitializeConfiguration : replaces the values of variables, and updates data type to match
+//golangs configuration in the schema definition
+func InitializeConfiguration(config interface{}) {
+
+	//Part 1 : FIX VALIDATOR
+
+	//get validator schema: confg => {name:[], age:[] ...}
+	confg := config.(map[string]interface{})["validator"].(map[string]interface{})
+
+	//conf : type "[]map[string]interface{}" underneath
+	for _, conf := range confg { //confg => [{"field":"...", "type":"..."}, {"field"...}]
+		cnf := conf.([]map[string]interface{})
+		for _, parameter := range cnf {
+			val := fmt.Sprintf("%v", parameter["value"])
+			parameter["error"] = strings.Replace(parameter["error"].(string), "$value", val, 1)
+		}
+	}
+}
+
 /*
 	Loads the configuration file into memory and
 	maps the endpoints to their location in configuration.
