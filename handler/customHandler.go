@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 	"strings"
 	"toml_api/errorresponse"
@@ -12,15 +11,6 @@ import (
 //CustomHandler : redirects according to request method
 func CustomHandler(config interface{}, apiEndPoint map[string][]string, loc []string) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-
-		url := r.URL.String()
-		log.Println("Api location ==> ",loc[1])
-		log.Println("Request coming via ==> ",url)
-
-		if url[len(url)-1] == '/' {
-			url = url[:len(url)-1]
-		}
-
 		//eg: loc -> api/root
 		//skip api and send only "root" to getresource
 		methods := getresource.GetApiMethods(config, loc[1]) //returns map[string]bool

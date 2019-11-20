@@ -2,7 +2,6 @@ package requesthandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sync"
 	"toml_api/authenticator"
@@ -25,8 +24,6 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &postConfig)
-
-	fmt.Println(postConfig.Auth)
 
 	//authenticate request
 	if !authenticator.IsAuthenticated(r, postConfig.Auth) {
