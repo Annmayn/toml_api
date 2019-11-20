@@ -2,7 +2,6 @@ package fieldValidator
 
 import (
 	"errors"
-	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 )
@@ -27,17 +26,15 @@ func ValidateField(fieldValue interface{}, schema map[string]interface{}) string
 		//so we are certain that the value is int at this point
 		fv := int64(fieldValue.(float64))
 		cvalConverted := cval.(int64)
-		strCval := fmt.Sprintf("%v", cval)
 		if fv < cvalConverted {
-			err = errors.New("can't be less than " + strCval)
+			err = errors.New(schema["error"].(string))
 		}
 
 	case "int.max_value":
 		fv := int64(fieldValue.(float64))
 		cvalConverted := cval.(int64)
-		strCval := fmt.Sprintf("%v", cval)
 		if fv > cvalConverted {
-			err = errors.New("can't be more than " + strCval)
+			err = errors.New(schema["error"].(string))
 		}
 	}
 	if err != nil {
