@@ -26,28 +26,28 @@ func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	json.Unmarshal(b, &putConfig)
 
 	//authenticate request
-	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
+	if !authenticator.IsAuthenticated(r, putConfig.Auth) {
 		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
 
-	var schema string=putConfig.Data
+	var schema string = putConfig.Data
 
-	s:=strings.Replace(schema,"$","",1)
-	sch:=strings.Split(s,".")
+	s := strings.Replace(schema, "$", "", 1)
+	sch := strings.Split(s, ".")
 
-	schemaData:=getresource.GetResource(config,sch[0],sch[1])
+	schemaData := getresource.GetResource(config, sch[0], sch[1])
 
 	//verify incoming data according to schema and patch
-	data:=make(map[string]interface{})
+	data := make(map[string]interface{})
 	//
-	if strings.Compare(r.Header.Get("Content-Type"),strings.Trim(r.Header.Get("Content-Type"),"\n"))!=0{
-		errorresponse.ThrowError(w,"Content-Type Header is not application/json")
+	if strings.Compare(r.Header.Get("Content-Type"), strings.Trim(r.Header.Get("Content-Type"), "\n")) != 0 {
+		errorresponse.ThrowError(w, "Content-Type Header is not application/json")
 		return
 	}
 
-	if err:=json.NewDecoder(r.Body).Decode(&data);err!=nil{
-		errorresponse.ThrowError(w,fmt.Sprint("%s",err))
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		errorresponse.ThrowError(w, fmt.Sprint("%s", err))
 		return
 	}
 
@@ -64,54 +64,52 @@ func PutHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	}
 
 	if len(dataRequired) > 0 {
-		responsehandler.SendJSONResponse(w,dataRequired,404)
+		responsehandler.SendJSONResponse(w, dataRequired, 404)
 		return
 	} else if len(validityResult) > 0 {
-		responsehandler.SendJSONResponse(w,validityResult,404)
+		responsehandler.SendJSONResponse(w, validityResult, 404)
 		return
 	}
 
-
 	//read data from file
-	queryResults:=fileio.ReadFromFile()
+	queryResults := fileio.ReadFromFile()
 	//create a map for response
-	response:=make(map[string]interface{})
+	response := make(map[string]interface{})
 	//get ```result``` value from config file
-	resultWithoutDollar:=strings.Replace(putConfig.Result,"$","",1)
-	resultArr:=strings.Split(resultWithoutDollar,".")
+	resultWithoutDollar := strings.Replace(putConfig.Result, "$", "", 1)
+	resultArr := strings.Split(resultWithoutDollar, ".")
 	//send response as per schema defined in ```result```
-	responseResult:=getresource.GetResource(config,resultArr[0],resultArr[1])
+	responseResult := getresource.GetResource(config, resultArr[0], resultArr[1])
 	//check which keys are required in response
-	resultFields:=make(map[string]bool)
+	resultFields := make(map[string]bool)
 	//create a map of required keys in resultFields
-	for key,_:=range responseResult.(map[string]interface{}){
-		resultFields[key]=true
+	for key, _ := range responseResult.(map[string]interface{}) {
+		resultFields[key] = true
 	}
 
-
 	//put new data
-	dataToWrite:=make(map[string]interface{})
+	dataToWrite := make(map[string]interface{})
 
-	for key,_:=range schemaData.(map[string]interface{}){
-		if _,ok:=necessaryData[key];ok{
-			dataToWrite[key]=necessaryData[key]
-		}else if resultFields[key]{
-			dataToWrite[key]=necessaryData[key]
+	for key, _ := range schemaData.(map[string]interface{}) {
+		if _, ok := necessaryData[key]; ok {
+			dataToWrite[key] = necessaryData[key]
+		} else if resultFields[key] {
+			dataToWrite[key] = necessaryData[key]
 		}
 	}
 
-		//write new data
+	//write new data
 	fileio.WriteToFile(dataToWrite)
 
 	//send response according to schema specified in ```result```
 	//read again
-	queryResults=fileio.ReadFromFile()
-	for key,val:=range queryResults.(map[string]interface{}){
-		if _,ok:=resultFields[key];ok {
-			response[key]=val
+	queryResults = fileio.ReadFromFile()
+	for key, val := range queryResults.(map[string]interface{}) {
+		if _, ok := resultFields[key]; ok {
+			response[key] = val
 		}
 	}
 
-	responsehandler.SendJSONResponse(w,response,201)
+	responsehandler.SendJSONResponse(w, response, 201)
 	return
 }

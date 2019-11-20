@@ -22,24 +22,21 @@ func GetHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc 
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &getConfig)
 
-
 	//authenticate request
 	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
 		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
 
-
 	//perform next steps
 	/*
-	Current implementation reads only from a database.json file.
-	However, a generic QueryHandler has been created for future implementations!
-	 */
-	result:= query.QueryHandler(config,getConfig.Query,getConfig.QueryParams,getConfig.Result, getConfig.Attachments)
+		Current implementation reads only from a database.json file.
+		However, a generic QueryHandler has been created for future implementations!
+	*/
+	result := query.QueryHandler(config, getConfig.Query, getConfig.QueryParams, getConfig.Result, getConfig.Attachments)
 
 	//send response
-	responsehandler.SendJSONResponse(w,result,200)
+	responsehandler.SendJSONResponse(w, result, 200)
 	return
-
 
 }

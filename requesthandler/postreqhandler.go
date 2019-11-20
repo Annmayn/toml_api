@@ -2,11 +2,13 @@ package requesthandler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 	"toml_api/authenticator"
 	"toml_api/customvalidator"
 	"toml_api/errorresponse"
+	"toml_api/fileio"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
 	"toml_api/responsehandler"
@@ -24,8 +26,10 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 	b, _ := json.Marshal(resource)
 	json.Unmarshal(b, &postConfig)
 
+	fmt.Println(postConfig.Auth)
+
 	//authenticate request
-	if !authenticator.IsAuthenticated(r, getConfig.Auth) {
+	if !authenticator.IsAuthenticated(r, postConfig.Auth) {
 		errorresponse.ThrowError(w, "Request not authorized!")
 		return
 	}
@@ -60,7 +64,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request, config interface{}, loc
 		return
 	}
 
-	// fileio.WriteToFile(necessaryData)
+	fileio.WriteToFile(necessaryData)
 
 	//send JSON response
 	responsehandler.SendJSONResponse(w, necessaryData, 201)
