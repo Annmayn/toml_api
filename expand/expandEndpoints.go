@@ -18,7 +18,8 @@ func Endpoints(config interface{}, url string) string {
 		for i, val := range dir {
 			dirInter[i] = val
 		}
-		res := getresource.GetResource(config, dirInter...).(string)
+		_, tmpRes := getresource.GetResource(config, dirInter...)
+		res := tmpRes.(string)
 		url = res + url[len(ref)+1:]
 
 		if url[0] == '$' {

@@ -172,10 +172,9 @@ func Validate(config interface{}, validators []string, schema string, toValidate
 	//Compare schema and toValidate data
 	//schema : $schema.user
 	resources := strings.Split(schema, ".") //[$schema, user]
-
 	// resources[0][1:] ::  $schema =>schema
-	toRequired := (getresource.GetResource(config, resources[0][1:], resources[1])).(map[string]interface{})
-
+	_, tmpToRequired := (getresource.GetResource(config, resources[0][1:], resources[1]))
+	toRequired := tmpToRequired.(map[string]interface{})
 	//data type of schema
 	dataTypeOfSchema := make(map[string]string)
 

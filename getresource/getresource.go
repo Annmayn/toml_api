@@ -1,7 +1,6 @@
 package getresource
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -11,7 +10,9 @@ import (
 
 	Need to perform typecheck for map[string]interface{}, []map[string]interface{}, string, int64
 */
-func GetResource(config interface{}, keys ...interface{}) interface{} {
+//update: returns bool (true if data exists else false) and the interface{}
+func GetResource(config interface{}, keys ...interface{}) (bool, interface{}) {
+	var hasError = false
 	//iterates over keys and continuously perform assertion
 	for _, p := range keys {
 		switch t := p.(type) {
@@ -20,11 +21,13 @@ func GetResource(config interface{}, keys ...interface{}) interface{} {
 		case int:
 			log.Println("received integer")
 		default:
-			fmt.Println(t)
+			hasError = true
+			var a interface{}
+			return hasError, a
 		}
 
 	}
-	return config
+	return hasError, config
 }
 
 /*
