@@ -46,14 +46,14 @@
 
     endpoint = '/api/:foo/:bar/:baz'
     [api.root.get]
-    "auth" = false
+    "auth" = true
     "query" = '$schema.user'
     "result" = '$schema.user'
     "attachments" = ["father.father", "mother.father"]
     "display" = { name = "User Name", age = "User Age" }
 
     [api.root.post]
-    "auth" = false
+    "auth" = true
     "data" = '$schema.user'
     "validator" =['$validator.name', '$validator.age']
     "result" = '$schema.user'

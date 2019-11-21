@@ -18,8 +18,7 @@ import (
 func PatchHandler(config interface{}, patchConfig methodconfigs.PatchRequestConfig, loc []string) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		//authenticate request
-		if !authenticator.IsAuthenticated(r, patchConfig.Auth) {
-			errorresponse.ThrowError(w, "Request not authorized!")
+		if !authenticator.IsAuthenticated(w, r, patchConfig.Auth) {
 			return
 		}
 

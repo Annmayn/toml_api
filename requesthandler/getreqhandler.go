@@ -3,7 +3,6 @@ package requesthandler
 import (
 	"net/http"
 	"toml_api/authenticator"
-	"toml_api/errorresponse"
 	"toml_api/methodconfigs"
 	"toml_api/query"
 	"toml_api/responsehandler"
@@ -15,8 +14,7 @@ func GetHandler(config interface{}, getConfig methodconfigs.GetRequestConfig, lo
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		//authenticate request
-		if !authenticator.IsAuthenticated(r, getConfig.Auth) {
-			errorresponse.ThrowError(w, "Request not authorized!")
+		if !authenticator.IsAuthenticated(w, r, getConfig.Auth) {
 			return
 		}
 

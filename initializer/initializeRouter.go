@@ -6,6 +6,8 @@ import (
 	"strings"
 	"toml_api/errorresponse"
 	"toml_api/getresource"
+	"toml_api/jsonwebtoken"
+	"toml_api/login"
 	"toml_api/methodconfigs"
 	"toml_api/requesthandler"
 
@@ -88,6 +90,10 @@ func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string]
 
 	}
 	//Handle all the undefined endpoints
+
+	//endpoint for login
+	r.HandleFunc("/api/auth", login.Login()).Methods("POST")
+	r.HandleFunc("/api/auth/refresh", jsonwebtoken.TokenRefreshHandler()).Methods("GET")
 	r.PathPrefix("/").HandlerFunc(notDefined)
 	return kv
 }

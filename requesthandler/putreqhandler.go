@@ -18,8 +18,7 @@ import (
 func PutHandler(config interface{}, putConfig methodconfigs.PutRequestConfig, loc []string) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		//authenticate request
-		if !authenticator.IsAuthenticated(r, putConfig.Auth) {
-			errorresponse.ThrowError(w, "Request not authorized!")
+		if !authenticator.IsAuthenticated(w, r, putConfig.Auth) {
 			return
 		}
 

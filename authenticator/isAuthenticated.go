@@ -1,23 +1,33 @@
 package authenticator
 
 import (
+	"io"
 	"net/http"
+	"toml_api/jsonwebtoken"
 )
 
-func IsAuthenticated(r *http.Request, auth bool) bool {
+func IsAuthenticated(w http.ResponseWriter, r *http.Request, auth bool) bool {
 	if !auth {
 		return true
 	}
-	authenticated := performAuthentication(r)
+
+	authenticated := performAuthentication(w, r)
 	return authenticated
 }
 
-func performAuthentication(r *http.Request) bool {
-	//logic for authentication
-	username, pwd, _ := r.BasicAuth()
-	if username == "admin" && pwd == "admin" {
-		return true
+func performAuthentication(w http.ResponseWriter, r *http.Request) bool {
+
+	//verify token
+
+	checkVerification, err := jsonwebtoken.IsAuthorized(r)
+
+	if !checkVerification {
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, `{"error":"`+err.Error()+`"}`)
+
+		return false
 	}
-	return false
+
+	return true
 
 }

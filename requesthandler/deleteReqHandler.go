@@ -17,8 +17,7 @@ func DeleteHandler(config interface{}, deleteConfig methodconfigs.DeleteRequestC
 		var deleteKey string
 
 		//authenticate request
-		if !authenticator.IsAuthenticated(r, deleteConfig.Auth) {
-			errorresponse.ThrowError(w, "Request not authorized!")
+		if !authenticator.IsAuthenticated(w, r, deleteConfig.Auth) {
 			return
 		}
 
