@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 
 func TokenRefreshHandler() http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-
+		secretKey = []byte(os.Getenv("SECRET_KEY"))
 		token, err := jwt.Parse(strings.Split(r.Header["Authorization"][0], " ")[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Error with signature check")

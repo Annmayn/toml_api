@@ -92,7 +92,7 @@ func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string]
 	//Handle all the undefined endpoints
 
 	//endpoint for login
-	r.HandleFunc("/api/auth", login.Login()).Methods("POST")
+	r.HandleFunc("/api/auth", login.Login()).Methods("GET")
 	r.HandleFunc("/api/auth/refresh", jsonwebtoken.TokenRefreshHandler()).Methods("GET")
 	r.PathPrefix("/").HandlerFunc(notDefined)
 	return kv

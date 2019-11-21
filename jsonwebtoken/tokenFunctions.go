@@ -5,13 +5,14 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-var secretKey = []byte("df567nm,^&*gbsnaas1212#@")
+var secretKey []byte
 
 // Create a new token object, specifying signing method and the claims
 var currentTime = time.Now()
@@ -24,7 +25,7 @@ var accessTimeAdded = 5
 
 //generate refresh tokens and access tokens
 func GenerateTokens(w http.ResponseWriter, username string) {
-
+	secretKey = []byte(os.Getenv("SECRET_KEY"))
 	//refresh token
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": username,
@@ -64,7 +65,7 @@ func GenerateTokens(w http.ResponseWriter, username string) {
 }
 
 func IsAuthorized(r *http.Request) (bool, error) {
-
+	secretKey = []byte(os.Getenv("SECRET_KEY"))
 	if len(secretKey) == 0 {
 		log.Fatal("HTTP Server unable to start, expected an APP_KEY for JWT auth")
 	}
@@ -77,7 +78,6 @@ func IsAuthorized(r *http.Request) (bool, error) {
 	})
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims["user"], claims["exp"])
 		if claims["type"] == "access_token" {
 			return true, nil
 		} else if claims["type"] == "refresh_token" {
