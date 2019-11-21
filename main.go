@@ -11,8 +11,13 @@ import (
 
 var router *mux.Router
 
+var resourceLocation string
+
+func init() {
+	resourceLocation = "resource.toml"
+}
+
 func main() {
-	resourceLocation := "resource.toml"
 
 	//initialize from the configuration file : resource.toml
 	//returns config, map of endpoint to resource and error
@@ -34,5 +39,6 @@ func main() {
 	// // router.HandlerFunc("DELETE", "/*any", handler.customHandler)
 	// // router.HandlerFunc("PATCH", "/*any", handler.customHandler)
 
+	//TODO: Use subrouter to serve "/swaggerui/" request
 	log.Fatal(http.ListenAndServe(":8080", initializer.RemoveTrailingSlash(router)))
 }

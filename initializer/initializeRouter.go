@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"toml_api/authenticator"
 	"toml_api/errorresponse"
 	"toml_api/getresource"
 	"toml_api/methodconfigs"
@@ -88,6 +89,7 @@ func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string]
 
 	}
 	//Handle all the undefined endpoints
+	r.HandleFunc("/auth", authenticator.CreateNew()).Methods("POST")
 	r.PathPrefix("/").HandlerFunc(notDefined)
 	return kv
 }
