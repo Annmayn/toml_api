@@ -22,6 +22,7 @@ func performAuthentication(w http.ResponseWriter, r *http.Request) bool {
 	checkVerification, err := jsonwebtoken.IsAuthorized(r)
 
 	if !checkVerification {
+
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, `{"error":"`+err.Error()+`"}`)
 

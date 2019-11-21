@@ -65,7 +65,7 @@
     "result" = '$schema.user'
 
     [api.root.patch]
-    "auth" = false
+    "auth" = true
     "schema" = '$schema.user'
     "validator" = ['$validator.name', '$validator.age']
     "result" = '$schema.user'
