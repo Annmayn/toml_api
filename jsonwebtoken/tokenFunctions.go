@@ -96,7 +96,7 @@ func IsAuthorized(r *http.Request) (bool, error) {
 		log.Fatal("HTTP Server unable to start, expected an APP_KEY for JWT auth")
 	}
 
-	token, err := jwt.ParseWithClaims(strings.Split(r.Header["Authorization"][0], " ")[1],&UserAccessTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(strings.Split(r.Header["Authorization"][0], " ")[1], &UserAccessTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Error with signature check")
 		}
@@ -106,9 +106,9 @@ func IsAuthorized(r *http.Request) (bool, error) {
 	if claims, ok := token.Claims.(*UserAccessTokenClaims); ok && token.Valid {
 		if claims.TokenType == "access_token" {
 
-			if exists:=hasPermission(claims.Permissions,r.Method);exists{
-				return true,nil
-			}else{
+			if exists := hasPermission(claims.Permissions, r.Method); exists {
+				return true, nil
+			} else {
 				return false, fmt.Errorf("User not authorized")
 			}
 			//return false, nil
@@ -121,11 +121,10 @@ func IsAuthorized(r *http.Request) (bool, error) {
 
 }
 
+func hasPermission(permissions []string, method string) bool {
 
-func hasPermission(permissions []string,method string)bool{
-
-	for _,val:=range permissions{
-		if method==strings.ToUpper(val){
+	for _, val := range permissions {
+		if method == strings.ToUpper(val) {
 			return true
 		}
 	}
