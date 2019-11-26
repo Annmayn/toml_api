@@ -16,7 +16,6 @@ func IsAuthenticated(w http.ResponseWriter, r *http.Request, auth bool) bool {
 }
 
 func performAuthentication(w http.ResponseWriter, r *http.Request) bool {
-
 	//verify token
 
 	checkVerification, err := jsonwebtoken.IsAuthorized(r)

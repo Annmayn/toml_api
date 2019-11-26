@@ -69,6 +69,7 @@ func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string]
 			if !hasError {
 				if method == "get" {
 					json.Unmarshal(b, &getConfig)
+					//r.HandleFunc("api/auth/facebook/callback",login.FacebookCallbackHandler)
 					r.HandleFunc(ep, requesthandler.GetHandler(config, getConfig, loc)).Methods("GET")
 				} else if method == "post" {
 					json.Unmarshal(b, &postConfig)
@@ -92,8 +93,11 @@ func InitializeRouter(r *mux.Router, config interface{}, apiEndPoint map[string]
 	//Handle all the undefined endpoints
 
 	//endpoint for login
+
 	r.HandleFunc("/api/auth", login.Login()).Methods("GET")
 	r.HandleFunc("/api/auth/refresh", jsonwebtoken.TokenRefreshHandler()).Methods("GET")
+	r.HandleFunc("/api/auth/facebook",login.FacebookLoginHandler).Methods("GET")
+	r.HandleFunc("/api/auth/callback",login.FacebookCallbackHandler).Methods("GET")
 	r.PathPrefix("/").HandlerFunc(notDefined)
 	return kv
 }
