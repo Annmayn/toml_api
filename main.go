@@ -7,20 +7,23 @@ import (
 	"toml_api/initializer"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 var router *mux.Router
 
-var resourceLocation string
-
+//init is revoked before main()
 func init() {
-	resourceLocation = "resource.toml"
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env found!")
+	}
 }
 
 func main() {
 
 	//initialize from the configuration file : resource.toml
 	//returns config, map of endpoint to resource and error
+	resourceLocation := "resource.toml"
 	config, apiEndPoint, _ := initializer.InitializeRoutes(resourceLocation)
 
 	//create new router

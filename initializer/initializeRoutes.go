@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
 	"toml_api/expand"
-
 	"github.com/BurntSushi/toml"
 )
 

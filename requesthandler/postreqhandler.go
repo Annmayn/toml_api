@@ -15,8 +15,8 @@ import (
 func PostHandler(config interface{}, postConfig methodconfigs.PostRequestConfig, loc []string) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		//authenticate request
-		if !authenticator.IsAuthenticated(r, postConfig.Auth) {
-			errorresponse.ThrowError(w, "Request not authorized!")
+
+		if !authenticator.IsAuthenticated(w, r, postConfig.Auth) {
 			return
 		}
 
