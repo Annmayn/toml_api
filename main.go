@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/pkg/profile"
 )
 
 var router *mux.Router
@@ -20,6 +21,7 @@ func init() {
 }
 
 func main() {
+	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
 
 	//initialize from the configuration file : resource.toml
 	//returns config, map of endpoint to resource and error

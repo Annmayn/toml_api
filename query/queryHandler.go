@@ -1,7 +1,6 @@
 package query
 
 import (
-	"fmt"
 	"strings"
 	"toml_api/fileio"
 	"toml_api/getresource"
@@ -22,7 +21,6 @@ func QueryHandler(config interface{}, query string, queryParams string, result s
 
 	//read from db
 	queryResults := fileio.ReadFromFile()
-	fmt.Println(queryResults)
 
 	//filter query results according to resultFields
 	for key, val := range queryResults.(map[string]interface{}) {

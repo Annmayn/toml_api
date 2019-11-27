@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+
+// import "google/protobuf/any.proto";
+
+message FileName{
+    string fileName = 1;
+}
+
+message FileData{
+    string fileName = 2;
+    string content = 3;
+}
+
+message FileContent{
+    bytes content = 4;
+}
+
+message EmptyResponse{}
+
+service AddService{
+    rpc ReadFile(FileName) returns (FileContent);
+    // rpc WriteToFile(FileData) returns (EmptyResponse);
+
+}
