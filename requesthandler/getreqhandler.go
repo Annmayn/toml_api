@@ -18,6 +18,9 @@ func GetHandler(config interface{}, getConfig methodconfigs.GetRequestConfig, lo
 			return
 		}
 
+		//may come in handy, look up google for more info (request header connection close)
+		r.Close = true
+
 		//perform next steps
 		/*
 			Current implementation reads only from a database.json file.
