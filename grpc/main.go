@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"io"
 	"io/ioutil"
 	"net"
 	"os"
@@ -25,24 +23,24 @@ func (s *server) ReadFile(ctx context.Context, request *proto.FileName) (*proto.
 	// if err != nil {
 	// 	panic(err)
 	// }
+	/////
 	byteFile, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
 		panic(err)
 	}
-	// data := string(byteFile)
-	// var data map[string]interface{}
-	var data io.Reader
-	_ = json.Unmarshal(byteFile, &data)
 	return &proto.FileContent{Content: byteFile}, nil
 }
 
-func init() {
-	fileName := "database.json"
-	jsonFile, _ = os.Open(fileName)
+func (s *server) WriteToFile(ctx context.Context, request *proto.FileData) (*proto.EmptyResponse, error) {
+	data := request.GetContent()
+	// b, _ := json.Unmarshal(data)
+	ioutil.WriteFile("database.json", data, 777)
+	return &proto.EmptyResponse{}, nil
 }
 
 func main() {
-	defer jsonFile.Close()
+	fileName := "database.json"
+	jsonFile, _ = os.Open(fileName)
 
 	listener, err := net.Listen("tcp", ":4040")
 	if err != nil {
@@ -55,4 +53,7 @@ func main() {
 	if e := srv.Serve(listener); e != nil {
 		panic(e)
 	}
+
+	// we don't want to close the "jsonFile" prematurely; only after the grpc server is terminated
+	jsonFile.Close()
 }

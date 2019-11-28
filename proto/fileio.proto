@@ -9,8 +9,8 @@ message FileName{
 }
 
 message FileData{
-    string fileName = 2;
-    string content = 3;
+    // string fileName = 2;
+    bytes content = 3;
 }
 
 message FileContent{
@@ -21,6 +21,6 @@ message EmptyResponse{}
 
 service AddService{
     rpc ReadFile(FileName) returns (FileContent);
-    // rpc WriteToFile(FileData) returns (EmptyResponse);
+    rpc WriteToFile(FileData) returns (EmptyResponse);
 
 }

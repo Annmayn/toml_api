@@ -21,6 +21,7 @@ func ReadFromFile() interface{} {
 		panic("here")
 	}
 	client := proto.NewAddServiceClient(conn)
+	defer conn.Close()
 
 	req := &proto.FileName{FileName: "database.json"}
 	if response, err := client.ReadFile(context.Background(), req); err == nil {
@@ -28,10 +29,8 @@ func ReadFromFile() interface{} {
 		json.Unmarshal(response.Content, &tmp)
 		return tmp
 	}
-	// defer func() {
-	// 	_ = recover()
-	// }()
-	// fmt.Println("Error")
-	panic("hi")
+
+	panic("hi") //remove this: only for debugging
+
 	return map[string]interface{}{"error": "couldn't run rpc call"}
 }
