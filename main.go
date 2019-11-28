@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 	"toml_api/initializer"
 
 	"github.com/gorilla/mux"
@@ -21,7 +22,7 @@ func init() {
 }
 
 func main() {
-	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+	defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
 
 	//initialize from the configuration file : resource.toml
 	//returns config, map of endpoint to resource and error
@@ -45,5 +46,11 @@ func main() {
 	// // router.HandlerFunc("PATCH", "/*any", handler.customHandler)
 
 	//TODO: Use subrouter to serve "/swaggerui/" request
-	log.Fatal(http.ListenAndServe(":8080", initializer.RemoveTrailingSlash(router)))
+	srv := &http.Server{
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+		Addr:         "localhost:8080",
+		Handler:      initializer.RemoveTrailingSlash(router),
+	}
+	log.Fatal(srv.ListenAndServe())
 }
