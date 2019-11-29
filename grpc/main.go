@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"os"
 	"toml_api/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -46,7 +48,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	srv := grpc.NewServer()
+
+	crt := "cert/server.crt"
+	key := "cert/server.key"
+	creds, e := credentials.NewServerTLSFromFile(crt, key)
+	if e != nil {
+		fmt.Println("Couldn't read files")
+		return
+	}
+
+	fmt.Println("Server started...")
+
+	srv := grpc.NewServer(grpc.Creds(creds))
+	// srv := grpc.NewServer()
+
 	proto.RegisterAddServiceServer(srv, &server{})
 	reflection.Register(srv)
 

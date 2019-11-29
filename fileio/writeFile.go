@@ -3,13 +3,24 @@ package fileio
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"toml_api/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 func WriteToFile(data interface{}) {
-	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
+
+	crt := "cert/server.crt"
+	creds, e := credentials.NewClientTLSFromFile(crt, "")
+	if e != nil {
+		fmt.Println("Couldn't read crt file")
+		return
+	}
+
+	conn, err := grpc.Dial("localhost:4040", grpc.WithTransportCredentials(creds))
+	// conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
 	if err != nil {
 		panic("here")
 	}
